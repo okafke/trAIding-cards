@@ -1,6 +1,6 @@
-package io.github.okafke.aitcg.text2image.dalle;
+package io.github.okafke.aitcg.t2i.dalle;
 
-import io.github.okafke.aitcg.text2image.Text2ImageModel;
+import io.github.okafke.aitcg.t2i.Text2ImageModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +35,9 @@ public class DallE3 implements Text2ImageModel {
     @Value("${openai.t2i.size}")
     private String size;
 
-    @Value("${openai.t2i.n}")
-    private int n;
+    // @Value("${openai.t2i.n}")
+    @SuppressWarnings("FieldCanBeLocal")
+    private final int n = 1;
 
     @Override
     public byte[] generateImage(String prompt) throws DallEException {
@@ -55,6 +56,10 @@ public class DallE3 implements Text2ImageModel {
                 }
 
                 try {
+                    if (data.revised_prompt() != null) {
+                        log.info("Returning image for prompt '" + prompt + "'. Prompt has been revised to '" + data.revised_prompt() + "'");
+                    }
+
                     return Base64.getDecoder().decode(data.b64_json());
                 } catch (IllegalArgumentException e) {
                     throw new DallEException("Failed to decode " + data.b64_json(), e);

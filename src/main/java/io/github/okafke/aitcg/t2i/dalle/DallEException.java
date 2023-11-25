@@ -1,4 +1,4 @@
-package io.github.okafke.aitcg.text2image.dalle;
+package io.github.okafke.aitcg.t2i.dalle;
 
 import lombok.experimental.StandardException;
 

@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AitcgApplication {
+public class AiTCGApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(AitcgApplication.class, args);
+		SpringApplication.run(AiTCGApplication.class, args);
 	}
 
 }
