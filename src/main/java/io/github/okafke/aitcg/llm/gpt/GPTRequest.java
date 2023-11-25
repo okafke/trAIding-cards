@@ -1,4 +1,4 @@
-package io.github.okafke.aitcg.gpt;
+package io.github.okafke.aitcg.llm.gpt;
 
 import java.util.ArrayList;
 import java.util.List;
