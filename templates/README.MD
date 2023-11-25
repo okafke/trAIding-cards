@@ -14,4 +14,9 @@ So next I attempted to create ornaments for a card:
 I was not happy with those results either, as I could not manage to find a way to make them "rectangly" enough.
 But a last attempt got me a quite usable template:
 
-![Card template final](card_template-1501611839027470511.webp)
+![Card template good](card_template-1501611839027470511.webp)
+
+Which I then dilettantically resized to fit a Din A7 format with a square in the middle for the image:
+
+![Card template final](card_template.png)
+
