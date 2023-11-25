@@ -1,5 +1,5 @@
 # Card templates
-I attempted to create a template for my cards with Dall-E-3, but I was not too happy with the results:
+I attempted to create a template for my cards with Dall-E-3 (vivid), but I was not too happy with the results:
 
 <img src="card_template2766171530565876042.webp" alt="Card template" width="200"/>
 <img src="card_template-983440908534853776.webp" alt="Card template" width="200"/>

@@ -1,6 +1,5 @@
 package io.github.okafke.aitcg.card;
 
-public class AiTCGCard {
-
+public record AiTCGCard(String name, String text, byte[] image) {
 
 }

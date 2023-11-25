@@ -42,7 +42,7 @@ public class DallE3 implements Text2ImageModel {
     @Override
     public byte[] generateImage(String prompt) throws DallEException {
         // TODO: use natural style?
-        DallERequest request = new DallERequest(model, prompt, "b64_json", quality, size, n);
+        DallERequest request = new DallERequest(model, prompt, "vivid", "b64_json", quality, size, n);
         try {
             DallEResponse response = openaiRestTemplate.postForObject(apiUrl, request, DallEResponse.class);
             if (response == null || response.data() == null || response.data().isEmpty()) {

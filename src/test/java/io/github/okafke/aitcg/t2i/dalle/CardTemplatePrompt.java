@@ -47,4 +47,16 @@ public class CardTemplatePrompt {
         }
     }
 
+    @Test
+    @Disabled
+    @SneakyThrows
+    void testGetFridgeMonster() {
+        byte[] image = assertDoesNotThrow(() -> dalle3.generateImage(
+                "Create a highly detailed and surreal scene featuring a flaming refrigerator creature as the central focus," +
+                        " surrounded by a post-apocalyptic landscape with intricate details, capturing the intense heat, hunger, and menace in the creature's expression."));
+        try (FileOutputStream os = new FileOutputStream(Paths.get("templates", "fridge.webp").toFile())) {
+            os.write(image);
+        }
+    }
+
 }
