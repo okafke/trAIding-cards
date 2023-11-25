@@ -1,4 +1,4 @@
-package io.github.okafke.aitcg.gpt;
+package io.github.okafke.aitcg.openai;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;

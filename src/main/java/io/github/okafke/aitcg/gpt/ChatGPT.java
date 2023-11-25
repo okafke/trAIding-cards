@@ -18,10 +18,10 @@ public class ChatGPT {
     @Qualifier("openaiRestTemplate")
     private final RestTemplate openaiRestTemplate;
 
-    @Value("${openai.model}")
+    @Value("${openai.llm.model}")
     private String model;
 
-    @Value("${openai.api.url}")
+    @Value("${openai.api.llm.url}")
     private String apiUrl;
 
     public GPTMessage chat(List<GPTMessage> request) throws GPTException {
