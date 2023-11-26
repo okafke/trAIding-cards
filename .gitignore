@@ -38,3 +38,4 @@ out/
 
 ### secrets ###
 /src/main/resources/env.properties
+/ignored_images/
