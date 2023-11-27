@@ -48,6 +48,7 @@ public class CardService {
         conversation.add(story);
         conversation.add(GPTMessage.user(Prompts.ONLY_OUTPUT + Prompts.NAME));
         conversation.max_tokens(10);
+        // TODO: ask for name before asking for story!!!!
         GPTMessage name = llm.chat(conversation);
         log.info("Received name '" + name + "' for attributes " + request.attributes());
 
