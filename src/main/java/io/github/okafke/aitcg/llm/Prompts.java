@@ -14,7 +14,7 @@ public class Prompts {
     public static final String NAME = "Given this prompt, give this creature a cute name in 1-5 words."; // TODO: attributes for names
 
     public static String limitSentences(int n) {
-        return "Keep your answer in " + n + " sentences. ";
+        return "Answer in " + n + " sentences. ";
     }
 
 }

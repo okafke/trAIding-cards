@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 @Disabled // this requests stuff from the OpenAI api
 @SpringBootTest
 @SuppressWarnings("NewClassNamingConvention")
-public class CardTemplatePrompt {
+public class CardTemplatePrompts {
     @Autowired
     private DallE3 dalle3;
 
@@ -43,6 +43,20 @@ public class CardTemplatePrompt {
         byte[] image = assertDoesNotThrow(() -> dalle3.generateImage(
                 "A nice symmetrical ornament to be printed on a card in a rectangle format."));
         try (FileOutputStream os = new FileOutputStream(Paths.get("templates", "card_ornaments" + new Random().nextLong() + ".webp").toFile())) {
+            os.write(image);
+        }
+    }
+
+    @Test
+    @Disabled
+    @SneakyThrows
+    void testGettingSymbols() {
+        byte[] image = assertDoesNotThrow(() -> dalle3.generateImage(
+                "Four simple symbols representing the elements: fire (red), earth (brown, cracked soil), water (blue), and air (green, a vortex of wind). " +
+                        "Each symbol should be distinct and easily recognizable." +
+                        " Please create four unique and straightforward images, one for each element. " +
+                        "Ensure that each image has a transparent background to allow for easy integration."));
+        try (FileOutputStream os = new FileOutputStream(Paths.get("templates", "symbols" + new Random().nextLong() + ".webp").toFile())) {
             os.write(image);
         }
     }

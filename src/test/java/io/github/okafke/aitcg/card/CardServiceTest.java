@@ -40,17 +40,17 @@ public class CardServiceTest {
         AiTCGCard cardWithVeryLongTitle = new AiTCGCard("Fiery Fridge Monster, the Terrible Super Fridge with ultra powers the movie!", FRIDGE_TEXT, image);
 
         byte[] cardWithShortTitleBytes = cardService.createCard(cardWithShortTitle);
-        try (FileOutputStream outputStream = new FileOutputStream("fiery_fridge_monster_card.png")) {
+        try (FileOutputStream outputStream = new FileOutputStream("ignored_images/fiery_fridge_monster_card.png")) {
             outputStream.write(cardWithShortTitleBytes);
         }
 
         byte[] cardWithLongTitleBytes = cardService.createCard(cardWithLongTitle);
-        try (FileOutputStream outputStream = new FileOutputStream("fiery_fridge_monster_card_long_title.png")) {
+        try (FileOutputStream outputStream = new FileOutputStream("ignored_images/fiery_fridge_monster_card_long_title.png")) {
             outputStream.write(cardWithLongTitleBytes);
         }
 
         byte[] cardWithVeryLongTitleBytes = cardService.createCard(cardWithVeryLongTitle);
-        try (FileOutputStream outputStream = new FileOutputStream("fiery_fridge_monster_card_very_long_title.png")) {
+        try (FileOutputStream outputStream = new FileOutputStream("ignored_images/fiery_fridge_monster_card_very_long_title.png")) {
             outputStream.write(cardWithVeryLongTitleBytes);
         }
 

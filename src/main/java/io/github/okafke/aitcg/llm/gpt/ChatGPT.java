@@ -25,10 +25,10 @@ public class ChatGPT {
     private String apiUrl;
 
     public GPTMessage chat(List<GPTMessage> request) throws GPTException {
-        return chat(new GPTRequest(model, request));
+        return chat(new GPTConversation(model, request));
     }
 
-    public GPTMessage chat(GPTRequest request) throws GPTException {
+    public GPTMessage chat(GPTConversation request) throws GPTException {
         try {
             GPTResponse response = openaiRestTemplate.postForObject(apiUrl, request, GPTResponse.class);
             log.info("Response: " + response + " for request: " + request);

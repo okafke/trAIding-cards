@@ -130,7 +130,7 @@ public class CardService {
 
     @SneakyThrows
     private static BufferedImage loadCardTemplate() {
-        return loadFromByteArray(new ClassPathResource("images/card_template.webp").getContentAsByteArray());
+        return loadFromByteArray(new ClassPathResource("images/card_template_very_red.webp").getContentAsByteArray());
     }
 
 }
