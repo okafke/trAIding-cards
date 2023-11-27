@@ -6,11 +6,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Base64;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * <a href="https://platform.openai.com/docs/api-reference/images/create#images/create-response_format">
@@ -70,6 +72,18 @@ public class DallE3 implements Text2ImageModel {
         } catch (RestClientException e) {
             throw new DallEException(e);
         }
+    }
+
+    @Async
+    public CompletableFuture<byte[]> generateImageAsync(String prompt) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return generateImage(prompt);
+            } catch (DallEException e) {
+                log.error("Failed to generate image for prompt " + prompt, e);
+                throw new RuntimeException(e);
+            }
+        }, Runnable::run);
     }
 
 }

@@ -1,5 +1,6 @@
 package io.github.okafke.aitcg.llm.gpt;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +10,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
+@Getter
 @Component
 @RequiredArgsConstructor(onConstructor_={@Autowired})
 public class ChatGPT {
@@ -40,6 +43,10 @@ public class ChatGPT {
         } catch (RestClientException e) {
             throw new GPTException(e);
         }
+    }
+
+    public GPTConversation conversation() {
+        return new GPTConversation(model, new ArrayList<>());
     }
 
 }

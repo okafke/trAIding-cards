@@ -1,136 +1,83 @@
 package io.github.okafke.aitcg.card;
 
-import com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi;
-import com.twelvemonkeys.imageio.stream.ByteArrayImageInputStream;
-import lombok.SneakyThrows;
-import org.davidmoten.text.utils.WordWrap;
-import org.springframework.core.io.ClassPathResource;
+import io.github.okafke.aitcg.api.CardCreationRequest;
+import io.github.okafke.aitcg.llm.Prompts;
+import io.github.okafke.aitcg.llm.gpt.ChatGPT;
+import io.github.okafke.aitcg.llm.gpt.GPTConversation;
+import io.github.okafke.aitcg.llm.gpt.GPTException;
+import io.github.okafke.aitcg.llm.gpt.GPTMessage;
+import io.github.okafke.aitcg.t2i.dalle.DallE3;
+import lombok.Cleanup;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor(onConstructor_={@Autowired})
 public class CardService {
-    private static final WebPImageReaderSpi WEB_P_IMAGE_READER_SPI = new WebPImageReaderSpi();
-    private static final BufferedImage TEMPLATE = loadCardTemplate();
-    private static final int IMAGE_X_OFFSET = 131;
-    private static final int IMAGE_Y_OFFSET = 214;
+    private final ImageService imageService;
+    private final ChatGPT llm;
+    private final DallE3 t2i;
 
-    private static final int TITLE_X_OFFSET = 76;
-    private static final int TITLE_Y_OFFSET = 106;
-    private static final int TITLE_MAX_WIDTH = 550;
+    // TODO: optimization, do not use a conversation but expect entire output at once in a certain format? Would save tokens!
+    @Async
+    public void createCard(CardCreationRequest request) throws GPTException {
+        log.info("Received card creation request for the attributes: " + request.attributes());
+        UUID uuid = UUID.randomUUID();
+        // Get detailed Dall-E-3 prompt from ChatGPT.
+        GPTConversation conversation = llm.conversation();
+        GPTMessage promptRequest = GPTMessage.user(Prompts.ONLY_OUTPUT + "Given a " + request.type() + " object with the attributes " + Prompts.list(request.attributes())
+                + " in a fantastic setting, you are to design a prompt for Dall-E, in high detail and with a fitting background.");
+        conversation.add(promptRequest);
+        GPTMessage dallEPrompt = llm.chat(conversation);
+        log.info("Received Dall-E prompt " + dallEPrompt + " for attributes " + request.attributes());
+        CompletableFuture<byte[]> image = t2i.generateImageAsync(dallEPrompt.content());
 
-    private static final int TEXT_X_OFFSET = 100;
-    private static final int TEXT_Y_OFFSET = 826;
-    private static final int TEXT_MAX_WIDTH = 569;
+        conversation.add(dallEPrompt);
+        conversation.add(GPTMessage.user(Prompts.ONLY_OUTPUT + Prompts.RANDOM_AUTHOR));
+        GPTMessage story = llm.chat(conversation);
+        log.info("Received story " + story + " for attributes " + request.attributes());
+        conversation.add(story);
+        conversation.add(GPTMessage.user(Prompts.ONLY_OUTPUT + Prompts.NAME));
+        conversation.max_tokens(10);
+        GPTMessage name = llm.chat(conversation);
+        log.info("Received name '" + name + "' for attributes " + request.attributes());
 
-    private static final int WIDTH = 512;
-    private static final int HEIGHT = 512;
+        GPTConversation elementConversation = llm.conversation();
+        elementConversation.add(story);
+        elementConversation.add(GPTMessage.user(Prompts.REQUEST_ELEMENT));
+        elementConversation.max_tokens(10);
 
-    public byte[] createCard(AiTCGCard card) throws IOException {
-        BufferedImage image = loadFromByteArray(card.image());
-        image = scale(image);
-        image = overlay(image);
+        GPTMessage elementResponse = llm.chat(elementConversation);
+        log.info("Received element '" + elementResponse + "' for attributes " + request.attributes());
+        AiTCGElement element = AiTCGElement.interpret(elementResponse.content());
 
-        drawTitle(image, card.name());
-        drawText(image, card.text());
+        image.thenAccept(imageBytes -> {
+            log.info("Got story, name and image for card " + name.content() + " for attributes " + request.attributes());
+            AiTCGCard tcgCard = new AiTCGCard(name.content(), element, story.content(), imageBytes);
+            try (FileOutputStream outputStream = new FileOutputStream("images/" + uuid + "-image.webp")) {
+                outputStream.write(imageBytes);
+            } catch (IOException e) {
+                log.error("Failed to save image images/" + uuid + ".webp!", e);
+            }
 
-        var os = new ByteArrayOutputStream();
-        ImageIO.write(image, "png", os);
-        return os.toByteArray();
-    }
-
-    private BufferedImage scale(BufferedImage image) {
-        double scaleX = (double) WIDTH / image.getWidth();
-        double scaleY = (double) HEIGHT / image.getHeight();
-        AffineTransform scaleTransform = AffineTransform.getScaleInstance(scaleX, scaleY);
-        AffineTransformOp op = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
-        return op.filter(image, null);
-    }
-
-    private BufferedImage overlay(BufferedImage overlay) {
-        BufferedImage result = new BufferedImage(TEMPLATE.getWidth(), TEMPLATE.getHeight(), TEMPLATE.getType());
-        Graphics2D g2d = result.createGraphics();
-
-        g2d.drawImage(TEMPLATE, 0, 0, null);
-        g2d.drawImage(overlay, IMAGE_X_OFFSET, IMAGE_Y_OFFSET, null);
-        g2d.dispose();
-
-        return result;
-    }
-
-    private void drawTitle(BufferedImage image, String title) {
-        Graphics2D g2d = image.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        Font font = new Font("Serif", Font.BOLD, 40);
-        g2d.setFont(font);
-        g2d.setColor(Color.BLACK);
-
-        FontMetrics metrics = g2d.getFontMetrics();
-        double scale = Math.min(1.0, (double) TITLE_MAX_WIDTH / metrics.stringWidth(title));
-        int x = (int) (TITLE_X_OFFSET / (Math.max(0.01, scale)));
-        // this ensures that the text stays centered in the middle of the white title box, if someone has a better solution, yes please
-        int y = (int) (TITLE_Y_OFFSET / (Math.max(0.01, scale)) - (1.0 - scale) * metrics.getHeight() * 0.5);
-
-        g2d.scale(scale, scale);
-        g2d.drawString(title, x, y);
-        g2d.dispose();
-    }
-
-    private void drawText(BufferedImage image, String textIn) {
-        // replace all new line characters, adding a space if two non-space characters would lie directly adjacent to each other.
-        String text = removeNewLines(textIn);
-        Graphics2D g2d = image.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        Font font = new Font("Serif", Font.PLAIN, 17);
-        g2d.setFont(font);
-        g2d.setColor(Color.BLACK);
-
-        FontMetrics metrics = g2d.getFontMetrics();
-        List<String> lines = WordWrap.from(text)
-                .maxWidth(TEXT_MAX_WIDTH)
-                .newLine(System.lineSeparator())
-                .includeExtraWordChars("~")
-                .excludeExtraWordChars("_")
-                .insertHyphens(true)
-                .breakWords(true)
-                .stringWidth(s -> metrics.stringWidth(s.toString()))
-                .wrapToList();
-
-        int y = TEXT_Y_OFFSET + metrics.getHeight();
-        for (String line : lines) {
-            g2d.drawString(line, TEXT_X_OFFSET, y);
-            y += g2d.getFontMetrics().getHeight();
-        }
-
-        g2d.dispose();
-    }
-
-    String removeNewLines(String text) {
-        return text.replaceAll("(\\r\\n|\\r|\\n)", " ").replaceAll(" +", " ").trim();
-    }
-
-    public static BufferedImage loadFromByteArray(byte[] bytes) throws IOException {
-        var reader = WEB_P_IMAGE_READER_SPI.createReaderInstance();
-        try (ImageInputStream is = new ByteArrayImageInputStream(bytes)) {
-            reader.setInput(is);
-            return reader.read(0);
-        }
-    }
-
-    @SneakyThrows
-    private static BufferedImage loadCardTemplate() {
-        return loadFromByteArray(new ClassPathResource("images/card_template_very_red.webp").getContentAsByteArray());
+            try {
+                byte[] cardImageBytes = imageService.createCard(tcgCard);
+                @Cleanup
+                FileOutputStream fos = new FileOutputStream("images/" + uuid + "-card.webp");
+                fos.write(cardImageBytes);
+            } catch (IOException e) {
+                log.error("Failed to save card images/" + uuid + ".webp!", e);
+            }
+        });
     }
 
 }

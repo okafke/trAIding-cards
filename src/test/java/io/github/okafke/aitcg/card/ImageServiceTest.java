@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
 @SpringBootTest
-public class CardServiceTest {
+public class ImageServiceTest {
     public static final String FRIDGE_TEXT = """
     In the desolate wasteland, where only shadows whispered of a forgotten world, there emerged a surreal manifestation of man's folly.
     The flaming refrigerator creature, a grotesque fusion of nature and unnatural, prowled with an insatiable hunger, its fiery eyes reflecting the remnants of a civilization lost.
@@ -22,7 +22,7 @@ public class CardServiceTest {
     """;
 
     @Autowired
-    private CardService cardService;
+    private ImageService cardService;
 
     @Value("classpath:fiery_fridge_monster.webp")
     Resource fieryFridgeMonsterImage;
@@ -35,9 +35,9 @@ public class CardServiceTest {
     void testCardService() {
         byte[] image = fieryFridgeMonsterImage.getContentAsByteArray();
         // TODO: make this actually test something, once we have attributes and stuff down!
-        AiTCGCard cardWithShortTitle = new AiTCGCard("Fiery Hungry Fridge", FRIDGE_TEXT, image);
-        AiTCGCard cardWithLongTitle = new AiTCGCard("Fiery Fridge Monster, the Terrible!", FRIDGE_TEXT, image);
-        AiTCGCard cardWithVeryLongTitle = new AiTCGCard("Fiery Fridge Monster, the Terrible Super Fridge with ultra powers the movie!", FRIDGE_TEXT, image);
+        AiTCGCard cardWithShortTitle = new AiTCGCard("Fiery Hungry Fridge", AiTCGElement.FIRE, FRIDGE_TEXT, image);
+        AiTCGCard cardWithLongTitle = new AiTCGCard("Fiery Fridge Monster, the Terrible!", AiTCGElement.FIRE, FRIDGE_TEXT, image);
+        AiTCGCard cardWithVeryLongTitle = new AiTCGCard("Fiery Fridge Monster, the Terrible Super Fridge with ultra powers the movie!", AiTCGElement.FIRE, FRIDGE_TEXT, image);
 
         byte[] cardWithShortTitleBytes = cardService.createCard(cardWithShortTitle);
         try (FileOutputStream outputStream = new FileOutputStream("ignored_images/fiery_fridge_monster_card.png")) {
