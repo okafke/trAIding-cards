@@ -35,22 +35,24 @@ public class CardService {
         // Get detailed Dall-E-3 prompt from ChatGPT.
         GPTConversation conversation = llm.conversation();
         GPTMessage promptRequest = GPTMessage.user(Prompts.ONLY_OUTPUT + "Given a " + request.type() + " object with the attributes " + Prompts.list(request.attributes())
-                + " in a fantastic setting, you are to design a prompt for Dall-E, in high detail and with a fitting background.");
+                + " in a fantastic setting, you are to design a prompt for Dall-E, in high detail and with a fitting background. Place great emphasis on the attributes.");
         conversation.add(promptRequest);
         GPTMessage dallEPrompt = llm.chat(conversation);
         log.info("Received Dall-E prompt " + dallEPrompt + " for attributes " + request.attributes());
         CompletableFuture<byte[]> image = t2i.generateImageAsync(dallEPrompt.content());
 
         conversation.add(dallEPrompt);
+
+        conversation.add(GPTMessage.user(Prompts.ONLY_OUTPUT + Prompts.NAME));
+        conversation.max_tokens(10);
+        GPTMessage name = llm.chat(conversation);
+        log.info("Received name '" + name + "' for attributes " + request.attributes());
+        conversation.add(name);
+        conversation.max_tokens(null);
+
         conversation.add(GPTMessage.user(Prompts.ONLY_OUTPUT + Prompts.RANDOM_AUTHOR));
         GPTMessage story = llm.chat(conversation);
         log.info("Received story " + story + " for attributes " + request.attributes());
-        conversation.add(story);
-        conversation.add(GPTMessage.user(Prompts.ONLY_OUTPUT + Prompts.NAME));
-        conversation.max_tokens(10);
-        // TODO: ask for name before asking for story!!!!
-        GPTMessage name = llm.chat(conversation);
-        log.info("Received name '" + name + "' for attributes " + request.attributes());
 
         GPTConversation elementConversation = llm.conversation();
         elementConversation.add(story);
@@ -62,7 +64,7 @@ public class CardService {
         AiTCGElement element = AiTCGElement.interpret(elementResponse.content());
 
         image.thenAccept(imageBytes -> {
-            log.info("Got story, name and image for card " + name.content() + " for attributes " + request.attributes());
+            log.info("Got story, name and image for card " + name.content() + " for attributes " + request.attributes() + ": " + uuid);
             AiTCGCard tcgCard = new AiTCGCard(name.content(), element, story.content(), imageBytes);
             try (FileOutputStream outputStream = new FileOutputStream("images/" + uuid + "-image.webp")) {
                 outputStream.write(imageBytes);
@@ -79,6 +81,8 @@ public class CardService {
                 log.error("Failed to save card images/" + uuid + ".webp!", e);
             }
         });
+
+        image.join();
     }
 
 }
