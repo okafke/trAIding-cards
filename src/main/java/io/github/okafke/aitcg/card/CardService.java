@@ -27,6 +27,9 @@ public class CardService {
     private final ChatGPT llm;
     private final DallE3 t2i;
 
+
+    // TODO: make cross references to other cards in text
+    // TODO: produce variant of card, evolution or something? Dall-E-2 can transform existing images
     // TODO: optimization, do not use a conversation but expect entire output at once in a certain format? Would save tokens!
     @Async
     public void createCard(CardCreationRequest request) throws GPTException {
@@ -34,8 +37,11 @@ public class CardService {
         UUID uuid = UUID.randomUUID();
         // Get detailed Dall-E-3 prompt from ChatGPT.
         GPTConversation conversation = llm.conversation();
-        GPTMessage promptRequest = GPTMessage.user(Prompts.ONLY_OUTPUT + "Given a " + request.type() + " object with the attributes " + Prompts.list(request.attributes())
-                + " in a fantastic setting, you are to design a prompt for Dall-E, in high detail and with a fitting background. Place great emphasis on the attributes.");
+        GPTMessage promptRequest = GPTMessage.user(Prompts.ONLY_OUTPUT + "Given a " + request.type()
+                + " object with the attributes " + Prompts.list(request.attributes())
+                + " in a fantastic setting, you are to design a prompt for Dall-E," +
+                " in high detail and with a fitting background." +
+                " Place great emphasis on the attributes and ensure that Dall-E does not include Text in the image..");
         conversation.add(promptRequest);
         GPTMessage dallEPrompt = llm.chat(conversation);
         log.info("Received Dall-E prompt " + dallEPrompt + " for attributes " + request.attributes());

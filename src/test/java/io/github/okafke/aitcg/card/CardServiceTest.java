@@ -18,7 +18,7 @@ public class CardServiceTest {
     @Test
     @Disabled //uses the OpenAI api
     public void testCreateCard() throws GPTException {
-        CardCreationRequest request = new CardCreationRequest(List.of("flaming", "blazing", "inferno", "flying"), "capybara");
+        CardCreationRequest request = new CardCreationRequest(List.of("lazy"), "olli");
         cardService.createCard(request);
     }
 
