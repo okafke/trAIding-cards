@@ -44,7 +44,7 @@ public class ImageService {
     }
 
     public BufferedImage createBufferedCard(AiTCGCard card) throws IOException {
-        BufferedImage image = loadFromByteArray(card.image());
+        BufferedImage image = loadFromByteArray(card.dallEResponse().getFirstData());
         image = scale(image);
         image = overlay(image, TEMPLATES.getOrDefault(card.element(), DEFAULT_TEMPLATE));
 

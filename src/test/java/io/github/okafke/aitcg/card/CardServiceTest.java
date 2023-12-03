@@ -3,11 +3,13 @@ package io.github.okafke.aitcg.card;
 import io.github.okafke.aitcg.api.CardCreationRequest;
 import io.github.okafke.aitcg.card.creation.CardService;
 import io.github.okafke.aitcg.llm.gpt.GPTException;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
 import java.util.List;
 
 @Disabled // Uses the OpenAI api
@@ -18,7 +20,8 @@ public class CardServiceTest {
 
     @Test
     @Disabled //uses the OpenAI api
-    public void testCreateCard() throws GPTException {
+    @SneakyThrows
+    public void testCreateCard() {
         CardCreationRequest request = new CardCreationRequest(List.of("lazy"), "olli");
         cardService.createCard(request);
     }

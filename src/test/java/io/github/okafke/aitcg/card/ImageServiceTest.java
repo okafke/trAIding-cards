@@ -1,5 +1,6 @@
 package io.github.okafke.aitcg.card;
 
+import io.github.okafke.aitcg.TestUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,6 @@ import org.springframework.core.io.Resource;
 
 import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -37,9 +37,9 @@ public class ImageServiceTest {
     public void testCardService() {
         byte[] image = fieryFridgeMonsterImage.getContentAsByteArray();
         // TODO: make this actually test something, once we have attributes and stuff down!
-        AiTCGCard cardWithShortTitle = new AiTCGCard(UUID.randomUUID(), "Fiery Hungry Fridge", AiTCGElement.FIRE, FRIDGE_TEXT, image);
-        AiTCGCard cardWithLongTitle = new AiTCGCard(UUID.randomUUID(), "Fiery Fridge Monster, the Terrible!", AiTCGElement.FIRE, FRIDGE_TEXT, image);
-        AiTCGCard cardWithVeryLongTitle = new AiTCGCard(UUID.randomUUID(), "Fiery Fridge Monster, the Terrible Super Fridge with ultra powers the movie!", AiTCGElement.FIRE, FRIDGE_TEXT, image);
+        AiTCGCard cardWithShortTitle = TestUtil.card("Fiery Hungry Fridge", FRIDGE_TEXT, image);
+        AiTCGCard cardWithLongTitle = TestUtil.card("Fiery Fridge Monster, the Terrible!", FRIDGE_TEXT, image);
+        AiTCGCard cardWithVeryLongTitle = TestUtil.card("Fiery Fridge Monster, the Terrible Super Fridge with ultra powers the movie!", FRIDGE_TEXT, image);
 
         byte[] cardWithShortTitleBytes = cardService.createCard(cardWithShortTitle);
         try (FileOutputStream outputStream = new FileOutputStream("ignored_images/fiery_fridge_monster_card.png")) {
@@ -64,8 +64,8 @@ public class ImageServiceTest {
     public void testTwoCards() {
         byte[] image = fieryFridgeMonsterImage.getContentAsByteArray();
         // TODO: make this actually test something, once we have attributes and stuff down!
-        AiTCGCard cardWithShortTitle = new AiTCGCard(UUID.randomUUID(), "Fiery Hungry Fridge", AiTCGElement.FIRE, FRIDGE_TEXT, image);
-        AiTCGCard cardWithLongTitle = new AiTCGCard(UUID.randomUUID(), "Fiery Fridge Monster, the Terrible!", AiTCGElement.FIRE, FRIDGE_TEXT, image);
+        AiTCGCard cardWithShortTitle = TestUtil.card("Fiery Hungry Fridge", FRIDGE_TEXT, image);
+        AiTCGCard cardWithLongTitle = TestUtil.card("Fiery Fridge Monster, the Terrible!", FRIDGE_TEXT, image);
 
         BufferedImage bufferedImage = cardService.twoCards(cardWithLongTitle, cardWithShortTitle);
         byte[] bytes = cardService.toBytes(bufferedImage);

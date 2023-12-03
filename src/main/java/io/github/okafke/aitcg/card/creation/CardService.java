@@ -3,6 +3,7 @@ package io.github.okafke.aitcg.card.creation;
 import io.github.okafke.aitcg.api.CardCreationRequest;
 import io.github.okafke.aitcg.card.AiTCGCard;
 import io.github.okafke.aitcg.card.AiTCGElement;
+import io.github.okafke.aitcg.card.CreatureStats;
 import io.github.okafke.aitcg.card.ImageService;
 import io.github.okafke.aitcg.llm.Prompts;
 import io.github.okafke.aitcg.llm.gpt.ChatGPT;
@@ -80,8 +81,8 @@ public class CardService {
         }
 
         image.thenAccept(imageBytes -> {
-            log.info("Got story, name and image for card " + name.content() + " for attributes " + request.attributes() + ": " + uuid);
-            AiTCGCard tcgCard = new AiTCGCard(uuid, name.content(), null, story.content(), imageBytes);
+            /*log.info("Got story, name and image for card " + name.content() + " for attributes " + request.attributes() + ": " + uuid);
+            AiTCGCard tcgCard = new AiTCGCard(uuid, name.content(), CreatureStats.roll(), story.content(), imageBytes);
             try (FileOutputStream outputStream = new FileOutputStream("images/" + uuid + "-image.webp")) {
                 outputStream.write(imageBytes);
             } catch (IOException e) {
@@ -95,7 +96,7 @@ public class CardService {
                 fos.write(cardImageBytes);
             } catch (IOException e) {
                 log.error("Failed to save card images/" + uuid + ".webp!", e);
-            }
+            }*/
         });
 
         image.join();
