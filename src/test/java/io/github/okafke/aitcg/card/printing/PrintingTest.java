@@ -3,6 +3,7 @@ package io.github.okafke.aitcg.card.printing;
 import jakarta.annotation.Nullable;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.printing.PDFPageable;
@@ -16,6 +17,7 @@ import java.awt.print.*;
 import java.io.File;
 import java.nio.file.Paths;
 
+@Slf4j
 public class PrintingTest {
     @SneakyThrows
     public static void main(String[] args) {
@@ -35,14 +37,14 @@ public class PrintingTest {
 
         printJob.setJobName("MyApp:");
         printJob.setPrintService(printService);
-        printJob.setPrintable(new ImagePrintable(pageFormat, image));
+        printJob.setPrintable(new ImagePrintable(pageFormat, image), pageFormat);
         printJob.print();
     }
 
     private static @Nullable PrintService getPrintService() {
         for (PrintService service : PrintServiceLookup.lookupPrintServices(null, null)) {
             //if (service.getName().trim().equalsIgnoreCase("Microsoft Print to PDF")) {
-            if (service.getName().trim().equalsIgnoreCase("Canon SELPHY CP1500")) {
+            if (service.getName().trim().equalsIgnoreCase("SELPHY_CP1500")) {
                 return service;
             }
         }

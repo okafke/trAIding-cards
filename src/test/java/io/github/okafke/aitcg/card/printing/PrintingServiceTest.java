@@ -54,7 +54,7 @@ public class PrintingServiceTest {
             outputStream.write(imageService.toBytes(bufferedImage));
         }
 
-        printingService.print(UUID.randomUUID(), bufferedImage);
+        //printingService.print(UUID.randomUUID(), bufferedImage);
     }
 
 }

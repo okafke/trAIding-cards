@@ -1,0 +1,93 @@
+*PPD-Adobe: "4.3"
+*FormatVersion: "4.3"
+*FileVersion: "1.28.15"
+*LanguageVersion: English
+*LanguageEncoding: ISOLatin1
+*PSVersion: "(3010.000) 0"
+*LanguageLevel: "3"
+*FileSystem: False
+*PCFileName: "drvless.ppd"
+*Manufacturer: "Canon"
+*ModelName: "Canon SELPHY CP1500 HTTP"
+*Product: "(Canon SELPHY CP1500 HTTP)"
+*NickName: "Canon SELPHY CP1500 HTTP, driverless, cups-filters 1.28.15"
+*ShortNickName: "Canon SELPHY CP1500 HTTP"
+*DefaultOutputOrder: Reverse
+*ColorDevice: True
+*cupsVersion: 2.4
+*cupsSNMPSupplies: False
+*cupsLanguages: "en"
+*APSupplies: "http://CP1500fa052c.local:8008/index.html"
+*cupsFilter2: "image/urf image/urf 0 -"
+*cupsFilter2: "image/pwg-raster image/pwg-raster 10 -"
+*cupsFilter2: "image/jpeg image/jpeg 0 -"
+*cupsManualCopies: True
+*OpenUI *PageSize/Media Size: PickOne
+*OrderDependency: 10 AnySetup *PageSize
+*DefaultPageSize: Postcard
+*PageSize 54x86mm: "<</PageSize[153.070866141732 243.779527559055]>>setpagedevice"
+*PageSize 89x119mm: "<</PageSize[252.283464566929 337.322834645669]>>setpagedevice"
+*PageSize Postcard/Hagaki: "<</PageSize[283.464566929134 419.527559055118]>>setpagedevice"
+*CloseUI: *PageSize
+*OpenUI *PageRegion/Media Size: PickOne
+*OrderDependency: 10 AnySetup *PageRegion
+*DefaultPageRegion: Postcard
+*PageRegion 54x86mm: "<</PageSize[153.070866141732 243.779527559055]>>setpagedevice"
+*PageRegion 89x119mm: "<</PageSize[252.283464566929 337.322834645669]>>setpagedevice"
+*PageRegion Postcard/Hagaki: "<</PageSize[283.464566929134 419.527559055118]>>setpagedevice"
+*CloseUI: *PageRegion
+*DefaultImageableArea: Postcard
+*DefaultPaperDimension: Postcard
+*ImageableArea 54x86mm: "18 36 135.070866141732 207.779527559055"
+*PaperDimension 54x86mm: "153.070866141732 243.779527559055"
+*ImageableArea 89x119mm: "18 36 234.283464566929 301.322834645669"
+*PaperDimension 89x119mm: "252.283464566929 337.322834645669"
+*ImageableArea Postcard: "18 36 265.464566929134 383.527559055118"
+*PaperDimension Postcard: "283.464566929134 419.527559055118"
+*HWMargins: "18 36 18 36"
+*ParamCustomPageSize Width: 1 points 150.236220472441 289.133858267717
+*ParamCustomPageSize Height: 2 points 240.944881889764 433.700787401575
+*ParamCustomPageSize WidthOffset: 3 points 0 0
+*ParamCustomPageSize HeightOffset: 4 points 0 0
+*ParamCustomPageSize Orientation: 5 int 0 3
+*CustomPageSize True: "pop pop pop <</PageSize[5 -2 roll]/ImagingBBox null>>setpagedevice"
+*% ColorModel from urf-supported
+*OpenUI *ColorModel/Print Color Mode: PickOne
+*OrderDependency: 10 AnySetup *ColorModel
+*ColorModel Gray/Monochrome: "<</cupsColorSpace 18/cupsBitsPerColor 8/cupsColorOrder 0/cupsCompression 0>>setpagedevice"
+*ColorModel RGB/Color: "<</cupsColorSpace 19/cupsBitsPerColor 8/cupsColorOrder 0/cupsCompression 0>>setpagedevice"
+*DefaultColorModel: RGB
+*CloseUI: *ColorModel
+*OpenUI *OutputBin/Output Tray: PickOne
+*OrderDependency: 10 AnySetup *OutputBin
+*DefaultOutputBin: FaceUp
+*OutputBin FaceUp/Face Up: ""
+*PageStackOrder FaceUp: Reverse
+*CloseUI: *OutputBin
+*DefaultResolution: 300dpi
+*OpenUI *cupsPrintQuality/Print Quality: PickOne
+*OrderDependency: 10 AnySetup *cupsPrintQuality
+*DefaultcupsPrintQuality: Normal
+*cupsPrintQuality Normal/Normal: "<</HWResolution[300 300]>>setpagedevice"
+*CloseUI: *cupsPrintQuality
+*OpenUI *print-content-optimize/Print Optimization: PickOne
+*OrderDependency: 10 AnySetup *print-content-optimize
+*Defaultprint-content-optimize: photo
+*print-content-optimize photo/Photo: ""
+*print-content-optimize auto/Automatic: ""
+*CloseUI: *print-content-optimize
+*OpenUI *print-rendering-intent/Print Rendering Intent: PickOne
+*OrderDependency: 10 AnySetup *print-rendering-intent
+*Defaultprint-rendering-intent: relative
+*print-rendering-intent relative/Relative: ""
+*print-rendering-intent relative-bpc/Relative w/Black Point Compensation: ""
+*CloseUI: *print-rendering-intent
+*OpenUI *print-scaling/Print Scaling: PickOne
+*OrderDependency: 10 AnySetup *print-scaling
+*Defaultprint-scaling: auto
+*print-scaling auto/Automatic: ""
+*print-scaling auto-fit/Auto-fit: ""
+*print-scaling fill/Fill: ""
+*print-scaling fit/Fit: ""
+*print-scaling none/None: ""
+*CloseUI: *print-scaling
