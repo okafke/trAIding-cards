@@ -1,6 +1,7 @@
 package io.github.okafke.aitcg.card;
 
 import io.github.okafke.aitcg.TestUtil;
+import io.github.okafke.aitcg.card.printing.PrintingService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.springframework.core.io.Resource;
 
 import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -24,13 +26,16 @@ public class ImageServiceTest {
     """;
 
     @Autowired
-    private ImageService cardService;
+    private ImageService imageService;
 
     @Value("classpath:fiery_fridge_monster.webp")
     Resource fieryFridgeMonsterImage;
 
     @Value("classpath:fiery_fridge_monster_card.png")
     Resource fieryFridgeMonsterCard;
+
+    @Autowired
+    private PrintingService printingService;
 
     @Test
     @SneakyThrows
@@ -41,17 +46,17 @@ public class ImageServiceTest {
         AiTCGCard cardWithLongTitle = TestUtil.card("Fiery Fridge Monster, the Terrible!", FRIDGE_TEXT, image);
         AiTCGCard cardWithVeryLongTitle = TestUtil.card("Fiery Fridge Monster, the Terrible Super Fridge with ultra powers the movie!", FRIDGE_TEXT, image);
 
-        byte[] cardWithShortTitleBytes = cardService.createCard(cardWithShortTitle);
+        byte[] cardWithShortTitleBytes = imageService.createCard(cardWithShortTitle);
         try (FileOutputStream outputStream = new FileOutputStream("ignored_images/fiery_fridge_monster_card.png")) {
             outputStream.write(cardWithShortTitleBytes);
         }
 
-        byte[] cardWithLongTitleBytes = cardService.createCard(cardWithLongTitle);
+        byte[] cardWithLongTitleBytes = imageService.createCard(cardWithLongTitle);
         try (FileOutputStream outputStream = new FileOutputStream("ignored_images/fiery_fridge_monster_card_long_title.png")) {
             outputStream.write(cardWithLongTitleBytes);
         }
 
-        byte[] cardWithVeryLongTitleBytes = cardService.createCard(cardWithVeryLongTitle);
+        byte[] cardWithVeryLongTitleBytes = imageService.createCard(cardWithVeryLongTitle);
         try (FileOutputStream outputStream = new FileOutputStream("ignored_images/fiery_fridge_monster_card_very_long_title.png")) {
             outputStream.write(cardWithVeryLongTitleBytes);
         }
@@ -67,8 +72,8 @@ public class ImageServiceTest {
         AiTCGCard cardWithShortTitle = TestUtil.card("Fiery Hungry Fridge", FRIDGE_TEXT, image);
         AiTCGCard cardWithLongTitle = TestUtil.card("Fiery Fridge Monster, the Terrible!", FRIDGE_TEXT, image);
 
-        BufferedImage bufferedImage = cardService.twoCards(cardWithLongTitle, cardWithShortTitle);
-        byte[] bytes = cardService.toBytes(bufferedImage);
+        BufferedImage bufferedImage = imageService.twoCards(cardWithLongTitle, cardWithShortTitle);
+        byte[] bytes = imageService.toBytes(bufferedImage);
         try (FileOutputStream outputStream = new FileOutputStream("ignored_images/fiery_fridge_two_cards.png")) {
             outputStream.write(bytes);
         }
@@ -78,19 +83,19 @@ public class ImageServiceTest {
     public void testRemoveNewLines() {
         String inputString1 = "This is a text\nwith newlines\n\nand spaces.";
         String expectedOutput1 = "This is a text with newlines and spaces.";
-        assertEquals(expectedOutput1, cardService.removeNewLines(inputString1));
+        assertEquals(expectedOutput1, imageService.removeNewLines(inputString1));
 
         String inputString2 = "Single newline\nin this text.";
         String expectedOutput2 = "Single newline in this text.";
-        assertEquals(expectedOutput2, cardService.removeNewLines(inputString2));
+        assertEquals(expectedOutput2, imageService.removeNewLines(inputString2));
 
         String inputString3 = "No newlines in this text.";
         String expectedOutput3 = "No newlines in this text.";
-        assertEquals(expectedOutput3, cardService.removeNewLines(inputString3));
+        assertEquals(expectedOutput3, imageService.removeNewLines(inputString3));
 
         String inputString5 = "\n   Text with leading and trailing spaces.   \n";
         String expectedOutput5 = "Text with leading and trailing spaces.";
-        assertEquals(expectedOutput5, cardService.removeNewLines(inputString5));
+        assertEquals(expectedOutput5, imageService.removeNewLines(inputString5));
     }
 
 }

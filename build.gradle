@@ -18,7 +18,7 @@ repositories {
 dependencies {
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.0'
 	implementation 'com.twelvemonkeys.imageio:imageio-webp:3.10.1'
-	implementation 'org.jline:jline:3.23.0'
+	implementation 'org.apache.pdfbox:pdfbox:3.0.1'
 
 	implementation 'com.github.davidmoten:word-wrap:0.1.12'
 
@@ -36,4 +36,5 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	systemProperty("java.awt.headless", "false")
 }

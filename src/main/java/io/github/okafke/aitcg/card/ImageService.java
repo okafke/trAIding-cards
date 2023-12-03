@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.EnumMap;
@@ -67,7 +68,7 @@ public class ImageService {
         return result;
     }
 
-    public byte[] toBytes(BufferedImage image) throws IOException {
+    public byte[] toBytes(RenderedImage image) throws IOException {
         var os = new ByteArrayOutputStream();
         ImageIO.write(image, "png", os);
         return os.toByteArray();
