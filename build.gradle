@@ -19,7 +19,8 @@ dependencies {
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.0'
 	implementation 'com.twelvemonkeys.imageio:imageio-webp:3.10.1'
 	implementation 'org.apache.pdfbox:pdfbox:3.0.1'
-
+	implementation 'com.hp.jipp:jipp-core:0.7.15'
+	implementation 'com.hp.jipp:jipp-pdl:0.7.15'
 	implementation 'com.github.davidmoten:word-wrap:0.1.12'
 
 	implementation 'org.springframework.boot:spring-boot-starter'
