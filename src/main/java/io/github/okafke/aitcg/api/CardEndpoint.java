@@ -1,6 +1,6 @@
 package io.github.okafke.aitcg.api;
 
-import io.github.okafke.aitcg.card.CardService;
+import io.github.okafke.aitcg.card.creation.CardService;
 import io.github.okafke.aitcg.llm.gpt.GPTException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

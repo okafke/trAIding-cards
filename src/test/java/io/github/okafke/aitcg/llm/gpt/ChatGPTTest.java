@@ -12,16 +12,24 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
-@Disabled // this requests stuff from the ChatGPT api
 @SpringBootTest
 public class ChatGPTTest {
     @Autowired
     private ChatGPT gpt;
 
     @Test
-    @Disabled
+    @Disabled // this requests stuff from the ChatGPT api
     void testGPT() {
         GPTMessage message = new GPTMessage("user", "Hello, I am performing a Spring Boot test, could you say Test?");
+        GPTMessage response = assertDoesNotThrow(() -> gpt.chat(Collections.singletonList(message)));
+        assertEquals("assistant", response.role());
+        log.info(String.valueOf(response));
+    }
+
+    @Test
+    //@Disabled // this requests stuff from the ChatGPT api
+    void testGPT2() {
+        GPTMessage message = new GPTMessage("user", "I want to design a simple, minimalistic logo. Center of the logo should be a golden disco ball, give me a prompt for Dall-E-3");
         GPTMessage response = assertDoesNotThrow(() -> gpt.chat(Collections.singletonList(message)));
         assertEquals("assistant", response.role());
         log.info(String.valueOf(response));

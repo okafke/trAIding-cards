@@ -1,6 +1,7 @@
 package io.github.okafke.aitcg.card;
 
 import io.github.okafke.aitcg.api.CardCreationRequest;
+import io.github.okafke.aitcg.card.creation.CardService;
 import io.github.okafke.aitcg.llm.gpt.GPTException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

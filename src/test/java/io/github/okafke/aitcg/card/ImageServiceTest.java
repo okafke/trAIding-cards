@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
 
+import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -32,12 +34,12 @@ public class ImageServiceTest {
 
     @Test
     @SneakyThrows
-    void testCardService() {
+    public void testCardService() {
         byte[] image = fieryFridgeMonsterImage.getContentAsByteArray();
         // TODO: make this actually test something, once we have attributes and stuff down!
-        AiTCGCard cardWithShortTitle = new AiTCGCard("Fiery Hungry Fridge", AiTCGElement.FIRE, FRIDGE_TEXT, image);
-        AiTCGCard cardWithLongTitle = new AiTCGCard("Fiery Fridge Monster, the Terrible!", AiTCGElement.FIRE, FRIDGE_TEXT, image);
-        AiTCGCard cardWithVeryLongTitle = new AiTCGCard("Fiery Fridge Monster, the Terrible Super Fridge with ultra powers the movie!", AiTCGElement.FIRE, FRIDGE_TEXT, image);
+        AiTCGCard cardWithShortTitle = new AiTCGCard(UUID.randomUUID(), "Fiery Hungry Fridge", AiTCGElement.FIRE, FRIDGE_TEXT, image);
+        AiTCGCard cardWithLongTitle = new AiTCGCard(UUID.randomUUID(), "Fiery Fridge Monster, the Terrible!", AiTCGElement.FIRE, FRIDGE_TEXT, image);
+        AiTCGCard cardWithVeryLongTitle = new AiTCGCard(UUID.randomUUID(), "Fiery Fridge Monster, the Terrible Super Fridge with ultra powers the movie!", AiTCGElement.FIRE, FRIDGE_TEXT, image);
 
         byte[] cardWithShortTitleBytes = cardService.createCard(cardWithShortTitle);
         try (FileOutputStream outputStream = new FileOutputStream("ignored_images/fiery_fridge_monster_card.png")) {
@@ -55,6 +57,21 @@ public class ImageServiceTest {
         }
 
         //assertArrayEquals(imageWithShortTitle.getContentAsByteArray(), cardWithShortTitleBytes);
+    }
+
+    @Test
+    @SneakyThrows
+    public void testTwoCards() {
+        byte[] image = fieryFridgeMonsterImage.getContentAsByteArray();
+        // TODO: make this actually test something, once we have attributes and stuff down!
+        AiTCGCard cardWithShortTitle = new AiTCGCard(UUID.randomUUID(), "Fiery Hungry Fridge", AiTCGElement.FIRE, FRIDGE_TEXT, image);
+        AiTCGCard cardWithLongTitle = new AiTCGCard(UUID.randomUUID(), "Fiery Fridge Monster, the Terrible!", AiTCGElement.FIRE, FRIDGE_TEXT, image);
+
+        BufferedImage bufferedImage = cardService.twoCards(cardWithLongTitle, cardWithShortTitle);
+        byte[] bytes = cardService.toBytes(bufferedImage);
+        try (FileOutputStream outputStream = new FileOutputStream("ignored_images/fiery_fridge_two_cards.png")) {
+            outputStream.write(bytes);
+        }
     }
 
     @Test

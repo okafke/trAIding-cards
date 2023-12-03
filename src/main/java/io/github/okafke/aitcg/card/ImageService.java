@@ -39,6 +39,11 @@ public class ImageService {
     private static final int HEIGHT = 512;
 
     public byte[] createCard(AiTCGCard card) throws IOException {
+        BufferedImage image = createBufferedCard(card);
+        return toBytes(image);
+    }
+
+    public BufferedImage createBufferedCard(AiTCGCard card) throws IOException {
         BufferedImage image = loadFromByteArray(card.image());
         image = scale(image);
         image = overlay(image, TEMPLATES.getOrDefault(card.element(), DEFAULT_TEMPLATE));
@@ -46,6 +51,23 @@ public class ImageService {
         drawTitle(image, card.name());
         drawText(image, card.text());
 
+        return image;
+    }
+
+    public BufferedImage twoCards(AiTCGCard card1, AiTCGCard card2) throws IOException {
+        BufferedImage image1 = createBufferedCard(card1);
+        BufferedImage image2 = createBufferedCard(card2);
+        BufferedImage result = new BufferedImage(image1.getWidth() * 2, image1.getHeight(), image1.getType());
+
+        Graphics2D g2d = result.createGraphics();
+        g2d.drawImage(image1, 0, 0, null);
+        g2d.drawImage(image2, image1.getWidth(), 0, null);
+        g2d.dispose();
+
+        return result;
+    }
+
+    public byte[] toBytes(BufferedImage image) throws IOException {
         var os = new ByteArrayOutputStream();
         ImageIO.write(image, "png", os);
         return os.toByteArray();
