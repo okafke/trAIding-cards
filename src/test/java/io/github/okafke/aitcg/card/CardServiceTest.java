@@ -12,17 +12,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.IOException;
 import java.util.List;
 
-@Disabled // Uses the OpenAI api
 @SpringBootTest
 public class CardServiceTest {
     @Autowired
     private CardService cardService;
 
     @Test
-    @Disabled //uses the OpenAI api
     @SneakyThrows
+    //@Disabled("uses the OpenAI api")
     public void testCreateCard() {
-        CardCreationRequest request = new CardCreationRequest(List.of("lazy"), "olli");
+        CardCreationRequest request = new CardCreationRequest(List.of("fiery", "hungry"), "fridge");
         cardService.createCard(request);
     }
 

@@ -40,3 +40,5 @@ out/
 /src/main/resources/env.properties
 /ignored_images/
 /images/
+/printing/
+/cards/

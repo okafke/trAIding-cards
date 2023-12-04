@@ -48,17 +48,17 @@ public class ImageServiceTest {
         AiTCGCard cardWithLongTitle = TestUtil.card("Fiery Fridge Monster, the Terrible!", FRIDGE_TEXT, image);
         AiTCGCard cardWithVeryLongTitle = TestUtil.card("Fiery Fridge Monster, the Terrible Super Fridge with ultra powers the movie!", FRIDGE_TEXT, image);
 
-        byte[] cardWithShortTitleBytes = imageService.createCard(cardWithShortTitle);
+        byte[] cardWithShortTitleBytes = imageService.creatPNG(cardWithShortTitle);
         try (FileOutputStream outputStream = new FileOutputStream("ignored_images/fiery_fridge_monster_card.png")) {
             outputStream.write(cardWithShortTitleBytes);
         }
 
-        byte[] cardWithLongTitleBytes = imageService.createCard(cardWithLongTitle);
+        byte[] cardWithLongTitleBytes = imageService.creatPNG(cardWithLongTitle);
         try (FileOutputStream outputStream = new FileOutputStream("ignored_images/fiery_fridge_monster_card_long_title.png")) {
             outputStream.write(cardWithLongTitleBytes);
         }
 
-        byte[] cardWithVeryLongTitleBytes = imageService.createCard(cardWithVeryLongTitle);
+        byte[] cardWithVeryLongTitleBytes = imageService.creatPNG(cardWithVeryLongTitle);
         try (FileOutputStream outputStream = new FileOutputStream("ignored_images/fiery_fridge_monster_card_very_long_title.png")) {
             outputStream.write(cardWithVeryLongTitleBytes);
         }
@@ -70,7 +70,7 @@ public class ImageServiceTest {
                     """
                     The wooden cello, adorned with carved comical features, came to life as the night fell. With her sound-hole smiles and animated crown pegs, she danced in the moonlight, her bow transforming into a magical wand, conjuring melodic spells. The vivacious background echoed with floating music notes and unfolding staves, while rests blossomed into whimsical objects, creating a joyous and surreal celebration of music in an imaginary world.
                     """, bytes);
-            byte[] celloBytes = imageService.createCard(cello);
+            byte[] celloBytes = imageService.creatPNG(cello);
             try (FileOutputStream outputStream = new FileOutputStream("ignored_images/cello_card2.png")) {
                 outputStream.write(celloBytes);
             }

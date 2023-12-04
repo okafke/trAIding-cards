@@ -3,7 +3,7 @@ package io.github.okafke.aitcg.card;
 import java.util.Random;
 
 public record CreatureStats(int attack, int defense, int speed, int level) {
-    public CreatureStats increment(int by) {
+    public CreatureStats increase(int by) {
         int attack = Math.max(attack() + by, 100);
         int defense = Math.max(defense() + by, 100);
         int speed = Math.max(speed() + by, 100);

@@ -39,12 +39,12 @@ public class ImageService {
     private static final int WIDTH = 512;
     private static final int HEIGHT = 512;
 
-    public byte[] createCard(AiTCGCard card) throws IOException {
-        BufferedImage image = createBufferedCard(card);
+    public byte[] creatPNG(AiTCGCard card) throws IOException {
+        BufferedImage image = createCard(card);
         return toPNG(image);
     }
 
-    public BufferedImage createBufferedCard(AiTCGCard card) throws IOException {
+    public BufferedImage createCard(AiTCGCard card) throws IOException {
         BufferedImage image = loadFromByteArray(card.dallEResponse().getFirstData());
         image = scale(image);
         image = overlay(image, TEMPLATES.getOrDefault(card.element(), DEFAULT_TEMPLATE));
@@ -56,8 +56,8 @@ public class ImageService {
     }
 
     public BufferedImage twoCards(AiTCGCard card1, AiTCGCard card2) throws IOException {
-        BufferedImage image1 = createBufferedCard(card1);
-        BufferedImage image2 = createBufferedCard(card2);
+        BufferedImage image1 = createCard(card1);
+        BufferedImage image2 = createCard(card2);
         return twoCards(image1, image2);
     }
 
