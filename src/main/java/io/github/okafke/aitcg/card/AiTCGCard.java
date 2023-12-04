@@ -1,6 +1,19 @@
 package io.github.okafke.aitcg.card;
 
-// TODO: Attack, Defense, Level something
-public record AiTCGCard(String name, AiTCGElement element, String text, byte[] image) {
+import io.github.okafke.aitcg.llm.gpt.GPTConversation;
+import io.github.okafke.aitcg.t2i.dalle.DallEResponse;
+import org.springframework.lang.Nullable;
 
+import java.util.UUID;
+
+public record AiTCGCard(
+        UUID uuid,
+        String name,
+        CreatureStats stats,
+        AiTCGElement element,
+        @Nullable UUID baseCard,
+        String text,
+        GPTConversation conversation,
+        DallEResponse dallEResponse
+) {
 }

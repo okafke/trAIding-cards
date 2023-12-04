@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.springframework.lang.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -23,6 +24,10 @@ public final class GPTConversation {
 
     public void add(GPTMessage message) {
         messages.add(message);
+    }
+
+    public GPTConversation copy() {
+        return new GPTConversation(model, new ArrayList<>(messages), max_tokens);
     }
 
 }

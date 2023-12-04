@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.EnumMap;
@@ -38,16 +39,51 @@ public class ImageService {
     private static final int WIDTH = 512;
     private static final int HEIGHT = 512;
 
-    public byte[] createCard(AiTCGCard card) throws IOException {
-        BufferedImage image = loadFromByteArray(card.image());
+    public byte[] creatPNG(AiTCGCard card) throws IOException {
+        BufferedImage image = createCard(card);
+        return toPNG(image);
+    }
+
+    public BufferedImage createCard(AiTCGCard card) throws IOException {
+        BufferedImage image = loadFromByteArray(card.dallEResponse().getFirstData());
         image = scale(image);
         image = overlay(image, TEMPLATES.getOrDefault(card.element(), DEFAULT_TEMPLATE));
 
         drawTitle(image, card.name());
         drawText(image, card.text());
 
+        return image;
+    }
+
+    public BufferedImage twoCards(AiTCGCard card1, AiTCGCard card2) throws IOException {
+        BufferedImage image1 = createCard(card1);
+        BufferedImage image2 = createCard(card2);
+        return twoCards(image1, image2);
+    }
+
+    public BufferedImage twoCards(BufferedImage image1, BufferedImage image2) {
+        BufferedImage result = new BufferedImage(image1.getWidth() * 2, image1.getHeight(), BufferedImage.TYPE_INT_RGB);
+
+        Graphics2D g2d = result.createGraphics();
+        g2d.drawImage(image1, 0, 0, null);
+        g2d.drawImage(image2, image1.getWidth(), 0, null);
+        g2d.dispose();
+
+        return result;
+    }
+
+    public byte[] toPNG(RenderedImage image) throws IOException {
         var os = new ByteArrayOutputStream();
         ImageIO.write(image, "png", os);
+        return os.toByteArray();
+    }
+
+    /**
+     * The image has to have a none alpha type!!!
+     */
+    public byte[] toJpeg(RenderedImage image) throws IOException {
+        var os = new ByteArrayOutputStream();
+        ImageIO.write(image, "jpeg", os);
         return os.toByteArray();
     }
 
