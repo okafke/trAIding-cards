@@ -13,6 +13,15 @@ public enum AiTCGElement {
 
     private static final Random RANDOM = new Random();
 
+    public AiTCGElement getOpposite() {
+        return switch (this) {
+            case FIRE -> WATER;
+            case WATER -> FIRE;
+            case EARTH -> AIR;
+            case AIR -> EARTH;
+        };
+    }
+
     public static AiTCGElement interpret(String textIn) {
         String text = textIn.toLowerCase();
         AiTCGElement result;

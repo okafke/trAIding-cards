@@ -50,8 +50,8 @@ public class CardService {
                 + " object with the attributes " + Prompts.list(request.attributes())
                 + " in a fantastic setting, you are to design a prompt for Dall-E," +
                 " in high detail and with a fitting background." +
-                " Place great emphasis on the attributes and ensure that Dall-E does not include Text in the image..");
-        conversation.add(promptRequest);
+                " Place great emphasis on the attributes."); // "and ensure that Dall-E does not include Text in the image."
+        conversation.add(promptRequest);                     // ^ seems to have the opposite effect?
         GPTMessage dallEPrompt = llm.chat(conversation);
         log.info("Received Dall-E prompt " + dallEPrompt + " for attributes " + request.attributes());
         // use prompt to get image in parallel
@@ -70,10 +70,12 @@ public class CardService {
         conversation.add(GPTMessage.user(Prompts.ONLY_OUTPUT + Prompts.NO_DALL_E + Prompts.RANDOM_AUTHOR));
         GPTMessage story = llm.chat(conversation);
         log.info("Received story " + story + " for attributes " + request.attributes());
+        conversation.add(story);
 
         // request element for the card
         CompletableFuture<AiTCGElement> elementFuture = elementService.getElement(story, request);
         CompletableFuture<CardAlternationService.CardAlternation> secondCardFuture = alternationService.createEvolution(uuid, conversation);
+        //CompletableFuture<CardAlternationService.CardAlternation> secondCardFuture = alternationService.createOpposite(uuid, conversation);
 
         elementFuture.thenAccept(element -> log.info("Received element " + element + " for card " + uuid + ": " + name));
         image.thenAccept(dallEResponse -> {

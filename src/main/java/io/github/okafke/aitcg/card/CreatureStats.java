@@ -7,7 +7,7 @@ public record CreatureStats(int attack, int defense, int speed, int level) {
         int attack = Math.max(attack() + by, 100);
         int defense = Math.max(defense() + by, 100);
         int speed = Math.max(speed() + by, 100);
-        int level = (int) (attack + defense + speed / 300.0);
+        int level = (int) (attack + defense + speed / 3.0);
         return new CreatureStats(attack, defense, speed, level);
     }
 
@@ -17,7 +17,7 @@ public record CreatureStats(int attack, int defense, int speed, int level) {
         int attack = random.nextInt(100);
         int defense = random.nextInt(100);
         int speed = random.nextInt(100);
-        int level = (int) (attack + defense + speed / 300.0);
+        int level = (int) ((attack + defense + speed) / 3.0);
         return new CreatureStats(attack, defense, speed, level);
     }
 

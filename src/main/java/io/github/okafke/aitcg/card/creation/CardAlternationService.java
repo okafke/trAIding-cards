@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 /**
  * Because our printer prints in A6 format we create two cards everytime.
@@ -33,29 +35,39 @@ public class CardAlternationService {
 
     @Async
     public CompletableFuture<CardAlternation> createEvolution(UUID baseCardUUID, GPTConversation conversation) throws IOException {
-        return createAlternation(baseCardUUID, conversation, Prompts.ONLY_OUTPUT + Prompts.NO_DALL_E + Prompts.EVOLUTION);
+        return createAlternation(baseCardUUID, conversation,
+                Prompts.ONLY_OUTPUT + Prompts.NO_DALL_E + Prompts.EVOLUTION + Prompts.ALTERNATE_DALL_E_REUSE, UnaryOperator.identity());
     }
 
     @Async
-    public CompletableFuture<CardAlternation> createAlternation(UUID baseCardUUID, GPTConversation conversation, String requestDallEPrompt) throws IOException {
+    public CompletableFuture<CardAlternation> createOpposite(UUID baseCardUUID, GPTConversation conversation) throws IOException {
+        return createAlternation(baseCardUUID, conversation,
+                Prompts.ONLY_OUTPUT + Prompts.NO_DALL_E + Prompts.OPPOSITE + Prompts.ALTERNATE_DALL_E_REUSE, AiTCGElement::getOpposite);
+    }
+
+    @Async
+    public CompletableFuture<CardAlternation> createAlternation(
+            UUID baseCardUUID, GPTConversation conversation, String requestDallEPrompt, UnaryOperator<AiTCGElement> element) throws IOException {
         UUID uuid = UUID.randomUUID();
         log.info("Creating alternation " + uuid + " for " + baseCardUUID);
         conversation.add(GPTMessage.user(requestDallEPrompt));
         GPTMessage dallEPrompt = llm.chat(conversation);
         CompletableFuture<DallEResponse> image = t2i.sendRequest(dallEPrompt.content());
+        conversation.add(dallEPrompt);
         conversation.add(GPTMessage.user(Prompts.ONLY_OUTPUT + Prompts.ALTERNATE_NAME));
         GPTMessage name = llm.chat(conversation);
+        conversation.add(name);
         conversation.add(GPTMessage.user(Prompts.ONLY_OUTPUT + Prompts.ALTERNATE_STORY));
         GPTMessage story = llm.chat(conversation);
         conversation.add(story);
 
-        return CompletableFuture.completedFuture(new CardAlternation(uuid, baseCardUUID, dallEPrompt, name, story, conversation, image));
+        return CompletableFuture.completedFuture(new CardAlternation(uuid, baseCardUUID, dallEPrompt, name, story, conversation, image, element));
     }
 
-    public record CardAlternation(UUID uuid, UUID baseCardUUID, GPTMessage dallEPrompt, GPTMessage name,
-                                  GPTMessage story, GPTConversation conversation, CompletableFuture<DallEResponse> image) {
+    public record CardAlternation(UUID uuid, UUID baseCardUUID, GPTMessage dallEPrompt, GPTMessage name, GPTMessage story,
+                                  GPTConversation conversation, CompletableFuture<DallEResponse> image, UnaryOperator<AiTCGElement> elementOperation) {
         public AiTCGCard awaitAiTCGCard(CreatureStats stats, AiTCGElement element) throws ExecutionException, InterruptedException {
-            return new AiTCGCard(uuid, name.content(), stats, element, baseCardUUID, story.content(), conversation, image.get());
+            return new AiTCGCard(uuid, name.content(), stats, elementOperation.apply(element), baseCardUUID, story.content(), conversation, image.get());
         }
     }
 

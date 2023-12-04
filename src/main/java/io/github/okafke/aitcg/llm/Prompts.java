@@ -19,7 +19,10 @@ public class Prompts {
     public static final String REQUEST_ELEMENT = "Which element do you think would fit the object just described the best: fire, water, earth or air? " +
             "Answer only with the element, do not explain your decision.";
 
-    public static final String EVOLUTION = "Create an evolution of the previous object. Add some details that make the evolution cooler or stronger than its predecessor, but they should still look similar.";
+    public static final String EVOLUTION = "Create a Dall-E prompt for an evolution of the previous object. Add some details that make the evolution cooler or stronger than its predecessor, but they should still look similar. ";
+    public static final String OPPOSITE = "Create a Dall-E prompt for an opposition to the previous object. They should still have similar attributes. If the previous object was element air it should be earth, if water then fire etc. but they should look similar. ";
+
+    public static final String ALTERNATE_DALL_E_REUSE = "Attempt to reuse the Dall-E prompt of the previous card as much as possible.";
     public static final String ALTERNATE_NAME = "Give this object a name, using aspects of the name of the previous object, in 1-5 words. ";
     public static final String ALTERNATE_STORY = "Create a story in the style of a random author (dont tell me which), about this object in 50 words, referencing the previous object by name.";
 
