@@ -17,8 +17,9 @@ import java.security.cert.X509Certificate;
 
 /**
  * A simple HTTP/HTTPS transport for IPP.
- *
  * It is assumed that the remote server will not deliver additional data (just an IPP packet).
+ * This sample is from the JIPP repository:
+ * <a href=https://github.com/HPInc/jipp/blob/5f1592b0a6dce7635e682e6de0daf5d5a5d7e051/sample/jprint/src/main/java/sample/HttpIppClientTransport.java>JIPP Sample</a>
  */
 class HttpIppClientTransport implements IppClientTransport {
     private static final String SSL_PROTOCOL = "TLSv1.2";
@@ -38,12 +39,7 @@ class HttpIppClientTransport implements IppClientTransport {
                 public void checkServerTrusted(X509Certificate[] certs, String authType) {}
             }
         };
-        ALL_HOSTS_VALID = new HostnameVerifier() {
-            @Override
-            public boolean verify(String hostname, SSLSession session) {
-                return true;
-            }
-        };
+        ALL_HOSTS_VALID = (hostname, session) -> true;
     }
 
     private final SSLContext sslContext;
@@ -58,10 +54,6 @@ class HttpIppClientTransport implements IppClientTransport {
         this.sslContext = createSSLContext();
     }
 
-    HttpIppClientTransport() {
-        this(false);
-    }
-
     @Override
     @NotNull
     public IppPacketData sendData(@NotNull URI uri, @NotNull IppPacketData request) throws IOException {
@@ -72,7 +64,6 @@ class HttpIppClientTransport implements IppClientTransport {
         connection.setChunkedStreamingMode(0);
         connection.setDoOutput(true);
 
-        // Copy IppPacket to the output stream
         try (IppOutputStream output = new IppOutputStream(connection.getOutputStream())) {
             output.write(request.getPacket());
             InputStream extraData = request.getData();
@@ -82,13 +73,11 @@ class HttpIppClientTransport implements IppClientTransport {
             }
         }
 
-        // Read the response from the input stream
         ByteArrayOutputStream responseBytes = new ByteArrayOutputStream();
         try (InputStream response = connection.getInputStream()) {
             copy(response, responseBytes);
         }
 
-        // Parse it back into an IPP packet
         IppInputStream responseInput = new IppInputStream(new ByteArrayInputStream(responseBytes.toByteArray()));
         return new IppPacketData(responseInput.readPacket(), responseInput);
     }
@@ -105,12 +94,11 @@ class HttpIppClientTransport implements IppClientTransport {
     private HttpURLConnection createURLConnection(URI uri) throws IOException {
         URL url = new URL(uri.toString().replaceAll("^ipp", "http"));
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-        if (acceptSelfSignedCerts && connection instanceof HttpsURLConnection) {
-            HttpsURLConnection httpsConnection = (HttpsURLConnection) connection;
+        if (acceptSelfSignedCerts && connection instanceof HttpsURLConnection httpsConnection) {
             httpsConnection.setSSLSocketFactory(sslContext.getSocketFactory());
             httpsConnection.setHostnameVerifier(ALL_HOSTS_VALID);
         }
+
         return connection;
     }
 

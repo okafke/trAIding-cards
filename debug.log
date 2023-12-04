@@ -1,3 +1,0 @@
-DEBUG2: get-printer-attributes: Cannot connect to printer with URI ipp://CP1500fa052c.local:631/ipp/print.
-DEBUG2: 
-ERROR: Unable to create PPD file: Could not poll sufficient capability info from the printer (ipp://CP1500fa052c.local:631/ipp/print, ipp://CP1500fa052c.local:631/ipp/print) via IPP!

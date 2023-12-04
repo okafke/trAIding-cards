@@ -1,6 +1,6 @@
 *PPD-Adobe: "4.3"
 *FormatVersion: "4.3"
-*FileVersion: "1.28.15"
+*FileVersion: "2.0.0"
 *LanguageVersion: English
 *LanguageEncoding: ISOLatin1
 *PSVersion: "(3010.000) 0"
@@ -10,40 +10,54 @@
 *Manufacturer: "Canon"
 *ModelName: "Canon SELPHY CP1500 HTTP"
 *Product: "(Canon SELPHY CP1500 HTTP)"
-*NickName: "Canon SELPHY CP1500 HTTP, driverless, cups-filters 1.28.15"
+*NickName: "Canon SELPHY CP1500 HTTP, driverless, 2.0.0"
 *ShortNickName: "Canon SELPHY CP1500 HTTP"
 *DefaultOutputOrder: Reverse
 *ColorDevice: True
+*LandscapeOrientation: Minus90
 *cupsVersion: 2.4
 *cupsSNMPSupplies: False
 *cupsLanguages: "en"
-*APSupplies: "http://CP1500fa052c.local:8008/index.html"
+*APSupplies: ""
+*cupsSingleFile: True
 *cupsFilter2: "image/urf image/urf 0 -"
-*cupsFilter2: "image/pwg-raster image/pwg-raster 10 -"
 *cupsFilter2: "image/jpeg image/jpeg 0 -"
 *cupsManualCopies: True
+*cupsUrfSupported: "W8,SRGB24,V1.5,RS300,IS7,MT11,PQ4,OB9,IFU0,OFU0,CP99"
 *OpenUI *PageSize/Media Size: PickOne
 *OrderDependency: 10 AnySetup *PageSize
 *DefaultPageSize: Postcard
-*PageSize 54x86mm: "<</PageSize[153.070866141732 243.779527559055]>>setpagedevice"
-*PageSize 89x119mm: "<</PageSize[252.283464566929 337.322834645669]>>setpagedevice"
+*PageSize 54x86mm/54 x 86mm: "<</PageSize[153.070866141732 243.779527559055]>>setpagedevice"
+*PageSize 54x86mm.Borderless/54 x 86mm (Borderless): "<</PageSize[153.070866141732 243.779527559055]>>setpagedevice"
+*PageSize 89x119mm/89 x 119mm: "<</PageSize[252.283464566929 337.322834645669]>>setpagedevice"
+*PageSize 89x119mm.Borderless/89 x 119mm (Borderless): "<</PageSize[252.283464566929 337.322834645669]>>setpagedevice"
 *PageSize Postcard/Hagaki: "<</PageSize[283.464566929134 419.527559055118]>>setpagedevice"
+*PageSize Postcard.Borderless/Hagaki (Borderless): "<</PageSize[283.464566929134 419.527559055118]>>setpagedevice"
 *CloseUI: *PageSize
 *OpenUI *PageRegion/Media Size: PickOne
 *OrderDependency: 10 AnySetup *PageRegion
 *DefaultPageRegion: Postcard
-*PageRegion 54x86mm: "<</PageSize[153.070866141732 243.779527559055]>>setpagedevice"
-*PageRegion 89x119mm: "<</PageSize[252.283464566929 337.322834645669]>>setpagedevice"
+*PageRegion 54x86mm/54 x 86mm: "<</PageSize[153.070866141732 243.779527559055]>>setpagedevice"
+*PageRegion 54x86mm.Borderless/54 x 86mm (Borderless): "<</PageSize[153.070866141732 243.779527559055]>>setpagedevice"
+*PageRegion 89x119mm/89 x 119mm: "<</PageSize[252.283464566929 337.322834645669]>>setpagedevice"
+*PageRegion 89x119mm.Borderless/89 x 119mm (Borderless): "<</PageSize[252.283464566929 337.322834645669]>>setpagedevice"
 *PageRegion Postcard/Hagaki: "<</PageSize[283.464566929134 419.527559055118]>>setpagedevice"
+*PageRegion Postcard.Borderless/Hagaki (Borderless): "<</PageSize[283.464566929134 419.527559055118]>>setpagedevice"
 *CloseUI: *PageRegion
 *DefaultImageableArea: Postcard
 *DefaultPaperDimension: Postcard
-*ImageableArea 54x86mm: "18 36 135.070866141732 207.779527559055"
+*ImageableArea 54x86mm: "7.086614173228 18.141732283465 145.984251968504 225.637795275591"
 *PaperDimension 54x86mm: "153.070866141732 243.779527559055"
-*ImageableArea 89x119mm: "18 36 234.283464566929 301.322834645669"
+*ImageableArea 54x86mm.Borderless: "0 0 153.070866141732 243.779527559055"
+*PaperDimension 54x86mm.Borderless: "153.070866141732 243.779527559055"
+*ImageableArea 89x119mm: "7.086614173228 9.637795275591 245.196850393701 327.685039370079"
 *PaperDimension 89x119mm: "252.283464566929 337.322834645669"
-*ImageableArea Postcard: "18 36 265.464566929134 383.527559055118"
+*ImageableArea 89x119mm.Borderless: "0 0 252.283464566929 337.322834645669"
+*PaperDimension 89x119mm.Borderless: "252.283464566929 337.322834645669"
+*ImageableArea Postcard: "7.086614173228 10.488188976378 276.377952755906 409.03937007874"
 *PaperDimension Postcard: "283.464566929134 419.527559055118"
+*ImageableArea Postcard.Borderless: "0 0 283.464566929134 419.527559055118"
+*PaperDimension Postcard.Borderless: "283.464566929134 419.527559055118"
 *HWMargins: "18 36 18 36"
 *ParamCustomPageSize Width: 1 points 150.236220472441 289.133858267717
 *ParamCustomPageSize Height: 2 points 240.944881889764 433.700787401575
@@ -51,11 +65,12 @@
 *ParamCustomPageSize HeightOffset: 4 points 0 0
 *ParamCustomPageSize Orientation: 5 int 0 3
 *CustomPageSize True: "pop pop pop <</PageSize[5 -2 roll]/ImagingBBox null>>setpagedevice"
-*% ColorModel from urf-supported
+*% ColorModel from print-color-mode-supported
 *OpenUI *ColorModel/Print Color Mode: PickOne
 *OrderDependency: 10 AnySetup *ColorModel
-*ColorModel Gray/Monochrome: "<</cupsColorSpace 18/cupsBitsPerColor 8/cupsColorOrder 0/cupsCompression 0>>setpagedevice"
-*ColorModel RGB/Color: "<</cupsColorSpace 19/cupsBitsPerColor 8/cupsColorOrder 0/cupsCompression 0>>setpagedevice"
+*ColorModel RGB/Color: ""
+*ColorModel Gray/Monochrome: ""
+*ColorModel AutoGray/Auto Monochrome: ""
 *DefaultColorModel: RGB
 *CloseUI: *ColorModel
 *OpenUI *OutputBin/Output Tray: PickOne
@@ -76,12 +91,12 @@
 *print-content-optimize photo/Photo: ""
 *print-content-optimize auto/Automatic: ""
 *CloseUI: *print-content-optimize
-*OpenUI *print-rendering-intent/Print Rendering Intent: PickOne
-*OrderDependency: 10 AnySetup *print-rendering-intent
-*Defaultprint-rendering-intent: relative
-*print-rendering-intent relative/Relative: ""
-*print-rendering-intent relative-bpc/Relative w/Black Point Compensation: ""
-*CloseUI: *print-rendering-intent
+*OpenUI *cupsRenderingIntent/Print Rendering Intent: PickOne
+*OrderDependency: 10 AnySetup *cupsRenderingIntent
+*DefaultcupsRenderingIntent: relative
+*cupsRenderingIntent relative/Relative: "<</cupsRenderingIntent (relative)>>setpagedevice"
+*cupsRenderingIntent relative-bpc/Relative w/Black Point Compensation: "<</cupsRenderingIntent (relative-bpc)>>setpagedevice"
+*CloseUI: *cupsRenderingIntent
 *OpenUI *print-scaling/Print Scaling: PickOne
 *OrderDependency: 10 AnySetup *print-scaling
 *Defaultprint-scaling: auto

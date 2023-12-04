@@ -38,14 +38,14 @@ public class PrintingPreparationServiceTest {
         AiTCGCard cardWithLongTitle = TestUtil.card("Fiery Fridge Monster, the Terrible!", FRIDGE_TEXT, image);
 
         BufferedImage bufferedImage = imageService.twoCards(cardWithLongTitle, cardWithShortTitle);
-        byte[] bytes = imageService.toBytes(bufferedImage);
+        byte[] bytes = imageService.toPNG(bufferedImage);
         try (FileOutputStream outputStream = new FileOutputStream("ignored_images/fiery_fridge_two_cards.png")) {
             outputStream.write(bytes);
         }
 
         bufferedImage = printingPreparationService.prepareImageForPrinting(bufferedImage);
         try (FileOutputStream outputStream = new FileOutputStream("ignored_images/fiery_fridge_two_cards_rotated.png")) {
-            outputStream.write(imageService.toBytes(bufferedImage));
+            outputStream.write(imageService.toPNG(bufferedImage));
         }
     }
 

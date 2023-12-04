@@ -16,6 +16,10 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Because our printer prints in A6 format we create two cards everytime.
+ * That way, we can print the side by side then cut the A6 paper to get two cards.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor_={@Autowired})

@@ -12,10 +12,14 @@ import java.util.UUID;
 
 public class TestUtil {
     public static AiTCGCard card(String name, String text, byte[] image) {
+        return card(name, AiTCGElement.FIRE, text, image);
+    }
+
+    public static AiTCGCard card(String name, AiTCGElement element, String text, byte[] image) {
         List<DallEResponse.DallEResponseData> data = new ArrayList<>(1);
         data.add(new DallEResponse.DallEResponseData(image, ""));
         DallEResponse response = new DallEResponse(0L, data);
-        return new AiTCGCard(UUID.randomUUID(), name, CreatureStats.roll(), AiTCGElement.FIRE, text, new GPTConversation("", new ArrayList<>()), response);
+        return new AiTCGCard(UUID.randomUUID(), name, CreatureStats.roll(), element, text, new GPTConversation("", new ArrayList<>()), response);
     }
 
 }

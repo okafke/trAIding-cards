@@ -5,7 +5,6 @@ import io.github.okafke.aitcg.t2i.dalle.DallEResponse;
 
 import java.util.UUID;
 
-// TODO: Attack, Defense, Level something
 public record AiTCGCard(
         UUID uuid,
         String name,
@@ -14,5 +13,4 @@ public record AiTCGCard(
         String text,
         GPTConversation conversation,
         DallEResponse dallEResponse) {
-
 }

@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.UUID;
+import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -61,6 +63,19 @@ public class ImageServiceTest {
             outputStream.write(cardWithVeryLongTitleBytes);
         }
 
+        try (var fis = new FileInputStream(Paths.get("ignored_images", "cello.webp").toFile())) {
+            byte[] bytes = fis.readAllBytes();
+            AiTCGCard cello = TestUtil.card("Melody Queen",
+                    AiTCGElement.AIR,
+                    """
+                    The wooden cello, adorned with carved comical features, came to life as the night fell. With her sound-hole smiles and animated crown pegs, she danced in the moonlight, her bow transforming into a magical wand, conjuring melodic spells. The vivacious background echoed with floating music notes and unfolding staves, while rests blossomed into whimsical objects, creating a joyous and surreal celebration of music in an imaginary world.
+                    """, bytes);
+            byte[] celloBytes = imageService.createCard(cello);
+            try (FileOutputStream outputStream = new FileOutputStream("ignored_images/cello_card2.png")) {
+                outputStream.write(celloBytes);
+            }
+        }
+
         //assertArrayEquals(imageWithShortTitle.getContentAsByteArray(), cardWithShortTitleBytes);
     }
 
@@ -73,9 +88,23 @@ public class ImageServiceTest {
         AiTCGCard cardWithLongTitle = TestUtil.card("Fiery Fridge Monster, the Terrible!", FRIDGE_TEXT, image);
 
         BufferedImage bufferedImage = imageService.twoCards(cardWithLongTitle, cardWithShortTitle);
-        byte[] bytes = imageService.toBytes(bufferedImage);
+        byte[] bytes = imageService.toPNG(bufferedImage);
         try (FileOutputStream outputStream = new FileOutputStream("ignored_images/fiery_fridge_two_cards.png")) {
             outputStream.write(bytes);
+        }
+    }
+
+    @Test
+    @SneakyThrows
+    public void testTwoCards2() {
+        try (FileInputStream fis = new FileInputStream(Paths.get("ignored_images", "cello_card2.png").toFile());
+             FileInputStream fis2 = new FileInputStream(Paths.get("images", "12c8829f-106e-4f33-b5cb-09af9b3b4321-card.webp").toFile())) {
+            BufferedImage image1 = ImageIO.read(fis);
+            BufferedImage image2 = ImageIO.read(fis2);
+            BufferedImage bufferedImage = imageService.twoCards(image1, image2);
+            try (FileOutputStream outputStream = new FileOutputStream("ignored_images/two_cards_cello.jpeg")) {
+                ImageIO.write(bufferedImage, "jpeg", outputStream);
+            }
         }
     }
 

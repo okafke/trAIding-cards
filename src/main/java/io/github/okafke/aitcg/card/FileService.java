@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 
 @Service
 public class FileService {
-    public void save(AiTCGCard card, byte[] image) throws IOException {
+    public void save(AiTCGCard card, byte[] png) throws IOException {
         //noinspection ResultOfMethodCallIgnored
         Paths.get("cards").toFile().mkdirs();
         String cardJson = new ObjectMapper().writeValueAsString(card);
@@ -19,7 +19,7 @@ public class FileService {
         }
 
         try (FileOutputStream fos = new FileOutputStream(Paths.get("cards", card.uuid() + "-card.png").toFile())) {
-            fos.write(image);
+            fos.write(png);
         }
     }
 

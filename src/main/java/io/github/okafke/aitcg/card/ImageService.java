@@ -41,7 +41,7 @@ public class ImageService {
 
     public byte[] createCard(AiTCGCard card) throws IOException {
         BufferedImage image = createBufferedCard(card);
-        return toBytes(image);
+        return toPNG(image);
     }
 
     public BufferedImage createBufferedCard(AiTCGCard card) throws IOException {
@@ -58,7 +58,11 @@ public class ImageService {
     public BufferedImage twoCards(AiTCGCard card1, AiTCGCard card2) throws IOException {
         BufferedImage image1 = createBufferedCard(card1);
         BufferedImage image2 = createBufferedCard(card2);
-        BufferedImage result = new BufferedImage(image1.getWidth() * 2, image1.getHeight(), image1.getType());
+        return twoCards(image1, image2);
+    }
+
+    public BufferedImage twoCards(BufferedImage image1, BufferedImage image2) {
+        BufferedImage result = new BufferedImage(image1.getWidth() * 2, image1.getHeight(), BufferedImage.TYPE_INT_RGB);
 
         Graphics2D g2d = result.createGraphics();
         g2d.drawImage(image1, 0, 0, null);
@@ -68,9 +72,18 @@ public class ImageService {
         return result;
     }
 
-    public byte[] toBytes(RenderedImage image) throws IOException {
+    public byte[] toPNG(RenderedImage image) throws IOException {
         var os = new ByteArrayOutputStream();
         ImageIO.write(image, "png", os);
+        return os.toByteArray();
+    }
+
+    /**
+     * The image has to have a none alpha type!!!
+     */
+    public byte[] toJpeg(RenderedImage image) throws IOException {
+        var os = new ByteArrayOutputStream();
+        ImageIO.write(image, "jpeg", os);
         return os.toByteArray();
     }
 
