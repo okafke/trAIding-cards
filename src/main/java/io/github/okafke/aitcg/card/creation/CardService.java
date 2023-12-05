@@ -114,7 +114,7 @@ public class CardService {
         try {
             byte[] jpeg = imageService.toJpeg(printImage);
             fileService.savePrintingImage(card.uuid(), secondCard.uuid(), jpeg);
-            printingService.print(card.uuid(), jpeg);
+            printingService.printJpeg(card.uuid(), jpeg);
         } catch (IOException e) {
             log.error("Failed to print cards " + card + " " + secondCard, e);
         }

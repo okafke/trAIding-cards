@@ -1,4 +1,4 @@
-package io.github.okafke.aitcg.t2i.dalle;
+package io.github.okafke.aitcg.util;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
