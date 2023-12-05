@@ -4,7 +4,7 @@ import io.github.okafke.aitcg.api.CardCreationRequest;
 import io.github.okafke.aitcg.card.AiTCGCard;
 import io.github.okafke.aitcg.card.AiTCGElement;
 import io.github.okafke.aitcg.card.CreatureStats;
-import io.github.okafke.aitcg.card.ImageService;
+import io.github.okafke.aitcg.card.render.ImageService;
 import io.github.okafke.aitcg.card.printing.FileService;
 import io.github.okafke.aitcg.card.printing.PrintingService;
 import io.github.okafke.aitcg.llm.Prompts;
@@ -60,7 +60,7 @@ public class CardService {
         // generate card name
         conversation.add(dallEPrompt);
         conversation.add(GPTMessage.user(Prompts.ONLY_OUTPUT + Prompts.NAME));
-        conversation.max_tokens(10);
+        conversation.max_tokens(20);
         GPTMessage name = llm.chat(conversation);
         log.info("Received name '" + name + "' for attributes " + request.attributes());
 

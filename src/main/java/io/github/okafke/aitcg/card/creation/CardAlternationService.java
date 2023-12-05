@@ -55,7 +55,9 @@ public class CardAlternationService {
         CompletableFuture<DallEResponse> image = t2i.sendRequest(dallEPrompt.content());
         conversation.add(dallEPrompt);
         conversation.add(GPTMessage.user(Prompts.ONLY_OUTPUT + Prompts.ALTERNATE_NAME));
+        conversation.max_tokens(20);
         GPTMessage name = llm.chat(conversation);
+        conversation.max_tokens(null);
         conversation.add(name);
         conversation.add(GPTMessage.user(Prompts.ONLY_OUTPUT + Prompts.ALTERNATE_STORY));
         GPTMessage story = llm.chat(conversation);

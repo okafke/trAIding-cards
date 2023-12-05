@@ -2,7 +2,7 @@ package io.github.okafke.aitcg.card.printing;
 
 import io.github.okafke.aitcg.TestUtil;
 import io.github.okafke.aitcg.card.AiTCGCard;
-import io.github.okafke.aitcg.card.ImageService;
+import io.github.okafke.aitcg.card.render.ImageService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.core.io.Resource;
 import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
 
-import static io.github.okafke.aitcg.card.ImageServiceTest.FRIDGE_TEXT;
+import static io.github.okafke.aitcg.card.render.ImageServiceTest.FRIDGE_TEXT;
 
 // @Disabled this actually prints
 @SpringBootTest

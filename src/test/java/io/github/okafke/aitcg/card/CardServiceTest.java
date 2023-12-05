@@ -21,7 +21,7 @@ public class CardServiceTest {
     @SneakyThrows
     //@Disabled("uses the OpenAI api")
     public void testCreateCard() {
-        CardCreationRequest request = new CardCreationRequest(List.of("fiery", "hungry"), "fridge");
+        CardCreationRequest request = new CardCreationRequest(List.of("robot", "cute"), "squirrel");
         cardService.createCard(request);
     }
 

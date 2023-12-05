@@ -1,5 +1,6 @@
 package io.github.okafke.aitcg.t2i.dalle;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -34,5 +35,15 @@ public class DallE3Test {
         }
         //assertDoesNotThrow(() -> dalle3.generateImage("simple, abstract logo, flat, minimalistic, golden disco ball with microphone "));
     }
+
+    @Test
+    @SneakyThrows
+    //@Disabled
+    void testDallE233() throws IOException {
+        try (FileOutputStream fos = new FileOutputStream("ignored_images/stats" + new Random().nextInt() + ".webp")) {
+            fos.write(dalle3.sendRequest("Simple, minimalistic, logos. sword, shield, wings and stars to represent the stats of attack, defense, speed and level.").get().getFirstData());
+        }
+    }
+
 
 }
