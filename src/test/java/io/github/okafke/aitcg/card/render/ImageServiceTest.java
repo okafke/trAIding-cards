@@ -4,7 +4,6 @@ import io.github.okafke.aitcg.TestUtil;
 import io.github.okafke.aitcg.card.AiTCGCard;
 import io.github.okafke.aitcg.card.AiTCGElement;
 import io.github.okafke.aitcg.card.printing.PrintingService;
-import io.github.okafke.aitcg.card.render.ImageService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;

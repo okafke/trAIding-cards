@@ -1,5 +1,6 @@
 package io.github.okafke.aitcg.t2i.dalle;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.github.okafke.aitcg.util.Base64ByteArrayJson;

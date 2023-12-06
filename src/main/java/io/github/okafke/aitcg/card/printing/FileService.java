@@ -6,12 +6,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -49,6 +53,19 @@ public class FileService {
         } catch (IOException e) {
             log.error("Failed to save printing jpeg" + uuid1 + "_" + uuid2, e);
         }
+    }
+
+    public List<String> getCardNames() {
+        File directory = Paths.get("cards").toFile();
+        File[] files = directory.listFiles();
+        if (directory.exists() && directory.isDirectory() && files != null) {
+            return Arrays.stream(files)
+                    .filter(file -> file.isFile() && file.getName().endsWith(".json"))
+                    .map(file -> file.getName().substring(0, file.getName().length() - ".json".length()))
+                    .collect(Collectors.toList());
+        }
+
+        return new ArrayList<>();
     }
 
 }

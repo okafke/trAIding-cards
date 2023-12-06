@@ -1,0 +1,54 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+:root, .title, .label {
+    background-color: black;
+    color: white !important;
+    overflow: hidden;
+}
+
+.rolling-band {
+    margin-top: 20px;
+    width: 100%;
+    height: 30vh;
+    overflow: hidden;
+}
+
+.image-container {
+    display: flex;
+    animation: roll 120s linear infinite;
+}
+
+.image-container img {
+    width: 100px;
+    height: auto;
+    margin-right: 10px;
+}
+
+@keyframes roll {
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.centered-text {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.next-page-button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #1c51a7;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}

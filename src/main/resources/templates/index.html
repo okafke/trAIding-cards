@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>trAIding-cards</title>
+</head>
+<body>
+
+<div class="rolling-band">
+    <div class="image-container">
+        <th:block th:each="i : ${#numbers.sequence(0, 10)}" th:remove="tag">
+            <th:block th:each="image, iterStat : ${images}">
+                <img th:src="@{'/cards/' + ${image}}" th:alt="'Image ' + ${iterStat.count}">
+            </th:block>
+        </th:block>
+    </div>
+</div>
+
+<div class="centered-text">
+    <p>Welcome to tr<b>AI</b>ding-cards.</p>
+</div>
+
+<button class="next-page-button" onclick="location.href='html/creation.html'">Start</button>
+
+</body>
+</html>
