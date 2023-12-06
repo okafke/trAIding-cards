@@ -24,6 +24,8 @@ dependencies {
 	implementation 'com.hp.jipp:jipp-pdl:0.7.15'
 	implementation 'com.github.davidmoten:word-wrap:0.1.12'
 
+	implementation 'org.springframework.shell:spring-shell-starter'
+	implementation 'org.springframework.shell:spring-shell-core'
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
@@ -36,7 +38,13 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.shell:spring-shell-dependencies:3.1.6"
+	}
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
-	systemProperty("java.awt.headless", "false")
+	//systemProperty("java.awt.headless", "false")
 }

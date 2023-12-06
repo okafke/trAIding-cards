@@ -4,6 +4,7 @@ import io.github.okafke.aitcg.TestUtil;
 import io.github.okafke.aitcg.card.AiTCGCard;
 import io.github.okafke.aitcg.card.render.ImageService;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,10 +13,10 @@ import org.springframework.core.io.Resource;
 
 import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
+import java.util.UUID;
 
 import static io.github.okafke.aitcg.card.render.ImageServiceTest.FRIDGE_TEXT;
 
-// @Disabled this actually prints
 @SpringBootTest
 public class PrintingServiceTest {
     @Autowired
@@ -35,7 +36,7 @@ public class PrintingServiceTest {
 
     @Test
     @SneakyThrows
-    // @Disabled this actually prints
+    @Disabled("This test prints.")
     public void testPrintingService() {
         byte[] image = fieryFridgeMonsterImage.getContentAsByteArray();
         // TODO: make this actually test something, once we have attributes and stuff down!
@@ -52,7 +53,7 @@ public class PrintingServiceTest {
             outputStream.write(imageService.toPNG(bufferedImage));
         }
 
-        //printingService.print(UUID.randomUUID(), bufferedImage);
+        printingService.printCardJpeg(UUID.randomUUID().toString(), imageService.toJpeg(bufferedImage));
     }
 
 }

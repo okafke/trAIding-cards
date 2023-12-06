@@ -18,7 +18,7 @@ public class ChatGPTTest {
     private ChatGPT gpt;
 
     @Test
-    @Disabled // this requests stuff from the ChatGPT api
+    @Disabled("Requests the OpenAI API")
     void testGPT() {
         GPTMessage message = new GPTMessage("user", "Hello, I am performing a Spring Boot test, could you say Test?");
         GPTMessage response = assertDoesNotThrow(() -> gpt.chat(Collections.singletonList(message)));
@@ -27,7 +27,7 @@ public class ChatGPTTest {
     }
 
     @Test
-    //@Disabled // this requests stuff from the ChatGPT api
+    @Disabled("Requests the OpenAI API")
     void testGPT2() {
         GPTMessage message = new GPTMessage("user", "I want to design a simple, minimalistic logo. Center of the logo should be a golden disco ball, give me a prompt for Dall-E-3");
         GPTMessage response = assertDoesNotThrow(() -> gpt.chat(Collections.singletonList(message)));

@@ -14,7 +14,6 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @Slf4j
-@Disabled // this requests stuff from the OpenAI api
 @SpringBootTest
 @SuppressWarnings("NewClassNamingConvention")
 public class CardTemplatePrompts {
@@ -22,8 +21,8 @@ public class CardTemplatePrompts {
     private DallE3 dalle3;
 
     @Test
-    @Disabled
     @SneakyThrows
+    @Disabled("Requests the OpenAI API")
     void testGettingCardTemplate() {
         byte[] image = assertDoesNotThrow(() -> dalle3.sendRequest(
                 "A a card in a trading card game. " +
@@ -37,8 +36,8 @@ public class CardTemplatePrompts {
     }
 
     @Test
-    @Disabled
     @SneakyThrows
+    @Disabled("Requests the OpenAI API")
     void testGettingOrnamentsForCardTemplate() {
         byte[] image = assertDoesNotThrow(() -> dalle3.sendRequest(
                 "A nice symmetrical ornament to be printed on a card in a rectangle format.").get().getFirstData());
@@ -48,8 +47,8 @@ public class CardTemplatePrompts {
     }
 
     @Test
-    @Disabled
     @SneakyThrows
+    @Disabled("Requests the OpenAI API")
     void testGettingSymbols() {
         byte[] image = assertDoesNotThrow(() -> dalle3.sendRequest(
                 "Four simple symbols representing the elements: fire (red), earth (brown, cracked soil), water (blue), and air (green, a vortex of wind). " +
@@ -62,8 +61,8 @@ public class CardTemplatePrompts {
     }
 
     @Test
-    @Disabled
     @SneakyThrows
+    @Disabled("Requests the OpenAI API")
     void testGetFridgeMonster() {
         byte[] image = assertDoesNotThrow(() -> dalle3.sendRequest(
                 "Create a highly detailed and surreal scene featuring a flaming refrigerator creature as the central focus," +

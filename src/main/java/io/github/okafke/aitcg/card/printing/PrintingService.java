@@ -1,77 +1,83 @@
 package io.github.okafke.aitcg.card.printing;
 
-import com.hp.jipp.encoding.IppPacket;
-import com.hp.jipp.model.MediaCol;
-import com.hp.jipp.model.Types;
-import com.hp.jipp.trans.IppPacketData;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static com.hp.jipp.model.Types.mediaCol;
-import static com.hp.jipp.model.Types.requestingUserName;
-
 @Slf4j
+@Getter
+@Setter
 @Service
-@RequiredArgsConstructor(onConstructor_={@Autowired})
 public class PrintingService {
     public static final String JPEG_FORMAT = "image/jpeg";
 
-    @Value("${printer.uri:#{null}}")
-    private URI printerURI;
+    private final Set<IppPrintJob> printingHistory = new LinkedHashSet<>();
+    private final PrintingIdService printingIdService;
+    private final List<Printer> printers;
 
-    private final List<PrintingQueue> printers = new ArrayList<>();
+    private @Nullable Printer cardPrinter;
+
+    @Autowired
+    public PrintingService(@Value("${printing.printers}") String[] printers,
+                           @Value("${printing.card.printer:#{null}}") @Nullable String cardPrinter,
+                           PrintingIdService printingIdService) {
+        this.printers = Arrays.stream(printers).map(printerIp -> new Printer(URI.create(printerIp))).toList();
+        this.cardPrinter = cardPrinter == null ? null : new Printer(URI.create(cardPrinter));
+        this.printingIdService = printingIdService;
+        log.info("Initialized Printing Service with printers " + this.printers);
+    }
 
     // TODO: solve with blocking thread that we notify about printing job?
     @Scheduled(timeUnit = TimeUnit.SECONDS, fixedDelay = 2)
     public void updateQueues() {
-        printers.forEach(PrintingQueue::update);
+        printers.forEach(Printer::update);
     }
 
-    public void printJpeg(UUID uuid, byte[] jpegBytes) {
-        print(uuid, printerURI, JPEG_FORMAT, jpegBytes);
+    public void printCardJpeg(String info, byte[] jpegBytes) {
+        Printer printer = cardPrinter != null ? cardPrinter : getEmptiestPrinter();
+        print(printingIdService.getPrintingId(), info, printer, JPEG_FORMAT, jpegBytes);
     }
 
-    public void print(UUID uuid, URI printerIp, String documentFormat, byte[] bytes) {
-        if (printerURI == null) {
-            log.info("Printing is disabled, not printing " + uuid);
+    public void print(int id, @Nullable URI printerIp, String documentFormat, byte[] bytes) {
+        Printer printer = printerIp == null ? getEmptiestPrinter() : getPrinter(printerIp);
+        print(id, null, printer, documentFormat, bytes);
+    }
+
+    public void print(int id, @Nullable String info, @Nullable Printer printer, String documentFormat, byte[] bytes) {
+        if (printer == null) {
+            log.info("Failed to print " + id + " printer did not exist!");
             return;
         }
 
-        log.info("Printing card " + uuid);
-        ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-        MediaCol mediaCollection = new MediaCol();
-        mediaCollection.setMediaTopMargin(0);
-        mediaCollection.setMediaBottomMargin(0);
-        // since we are portrait mode left and right are the long sides of the card.
-        // my printer leaves white space on the left side, so I added some margin on the right
-        mediaCollection.setMediaRightMargin(50);
-        mediaCollection.setMediaLeftMargin(0);
+        IppPrintJob printJob = new IppPrintJob(documentFormat, printer, bytes, id, info == null ? "" : info);
+        print(printJob, false);
+    }
 
-        IppPacket printRequest = IppPacket.printJob(printerURI)
-                .putOperationAttributes(
-                        requestingUserName.of("trAIding-cards"),
-                        Types.documentFormat.of(documentFormat))
-                .putJobAttributes(mediaCol.of(mediaCollection))
-                .build();
-        try {
-            IppPacketData response = new HttpIppClientTransport(true).sendData(printerIp, new IppPacketData(printRequest, in));
-            log.info("Received printing response for " + uuid + ": " + response.getPacket().prettyPrint(100, "   "));
-            // TODO: check for error, there is "Server busy"
-        } catch (IOException e) {
-            log.error("Failed to get response from printer for " + uuid, e);
+    public void print(IppPrintJob job, boolean addFirst) {
+        if (addFirst) {
+            job.getPrinter().getJobs().addFirst(job);
+        } else {
+            job.getPrinter().getJobs().add(job);
         }
+
+        printingHistory.add(job);
+    }
+
+    private @Nullable Printer getPrinter(URI printerIp) {
+        return printers.stream().filter(p -> printerIp.equals(p.getPrinterIp())).findFirst().orElse(null);
+    }
+
+    private @Nullable Printer getEmptiestPrinter() {
+        return printers.stream().min(Comparator.comparingInt(p -> p.getJobs().size())).orElse(null);
     }
 
 }

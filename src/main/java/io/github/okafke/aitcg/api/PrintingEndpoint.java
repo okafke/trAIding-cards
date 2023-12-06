@@ -1,5 +1,6 @@
 package io.github.okafke.aitcg.api;
 
+import io.github.okafke.aitcg.card.printing.PrintingIdService;
 import io.github.okafke.aitcg.card.printing.PrintingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,12 +20,13 @@ import java.util.UUID;
 @RequiredArgsConstructor(onConstructor_={@Autowired})
 public class PrintingEndpoint {
     private final PrintingService printingService;
+    private final PrintingIdService printingIdService;
 
     @PostMapping("/print")
     public ResponseEntity<Void> createCard(@RequestBody PrintRequest request) {
-        UUID uuid = UUID.randomUUID();
-        log.info("Received printing request " + uuid + " for printer " + request.printerIp());
-        printingService.print(uuid, request.printerIp(), request.documentFormat(), request.file());
+        int id = printingIdService.getPrintingId();
+        log.info("Received printing request " + id + " for printer " + request.printerIp());
+        printingService.print(id, request.printerIp(), request.documentFormat(), request.file());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

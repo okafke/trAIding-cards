@@ -1,18 +1,23 @@
 package io.github.okafke.aitcg.card.printing;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URI;
+import java.util.Deque;
 import java.util.LinkedList;
-import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
 // TODO: solve this with a blocking thread that we notify, instead of polling?
 @Getter
-@RequiredArgsConstructor
-public class PrintingQueue {
-    private final Queue<PrintJob> jobs = new LinkedList<>();
+@ToString
+@EqualsAndHashCode
+@RequiredArgsConstructor(onConstructor_={@Autowired})
+public class Printer {
+    private final Deque<IppPrintJob> jobs = new LinkedList<>();
     private final URI printerIp;
     private long lastJob;
 
@@ -21,19 +26,14 @@ public class PrintingQueue {
             return;
         }
 
-        PrintJob job = jobs.poll();
+        IppPrintJob job = jobs.poll();
         if (job != null) {
             try {
-                job.print(printerIp);
+                job.print();
             } finally {
                 lastJob = System.nanoTime();
             }
         }
-    }
-
-    @FunctionalInterface
-    public interface PrintJob {
-        void print(URI printerIp);
     }
 
 }
