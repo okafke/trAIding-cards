@@ -37,7 +37,7 @@ public class DallE3Test {
     @Disabled("Requests the OpenAI API")
     void testDallE233() throws IOException {
         try (FileOutputStream fos = new FileOutputStream("ignored_images/stats" + new Random().nextInt() + ".webp")) {
-            fos.write(dalle3.sendRequest("Simple, minimalistic, logos. sword, shield, wings and stars to represent the stats of attack, defense, speed and level.").get().getFirstData());
+            fos.write(dalle3.sendRequest("Simple, minimalistic, logos. sword, shield, wings and stars to represent the stats of attack, defense, speed and magic.").get().getFirstData());
         }
     }
 

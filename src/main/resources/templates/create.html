@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>trAIding-cards</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif; /* Set a generic font family */
+        }
+
+        .button-grid-container {
+            display: flex;
+            justify-content: center;
+            padding: 20px; /* Add padding to create space around the grid */
+            box-sizing: border-box; /* Include padding in the total width/height */
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            max-width: 800px; /* Set a maximum width for the grid if needed */
+            width: 100%; /* Ensure the grid takes up the available width */
+            margin: 0 auto; /* Center the grid horizontally */
+        }
+
+        .grid-button {
+            width: 100%;
+            white-space: normal;
+            padding: 10px 20px;
+            background-color: #1c51a7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            overflow-wrap: break-word;
+        }
+
+        /*noinspection CssUnusedSymbol*/
+        .grid-button.selected {
+            background-color: #2a6eb4;
+        }
+
+        .centered-text {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* TODO: AHHHHHHHHHHHHHHHHHHHHHHH */
+        /*noinspection CssUnusedSymbol*/
+        .centered-text2 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .next-page-button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #1c51a7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="centered-text">
+    <p th:text="${title_text}"></p>
+    <td>
+        <button th:if="${type != null}" class="next-page-button" th:attr="onclick=|createCard('${type}')|">
+            Create Card
+        </button>
+    </td>
+</div>
+
+<div class="button-grid-container">
+    <div class="button-grid">
+        <div th:each="attribute, iterStat : ${attributes}">
+            <td>
+                <button th:if="${type == null}" class="grid-button"
+                        th:text="${attribute}"
+                        th:attr="onclick='location.href=\'create?type=' + ${attribute} + '\''">
+                </button>
+                <button th:if="${type != null}" class="grid-button"
+                        th:text="${attribute}"
+                        th:attr="onclick=|onAttributeButtonClicked(this, '${attribute}')|">
+                </button>
+            </td>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ensure all buttons have similar size
+    document.addEventListener("DOMContentLoaded", function () {
+        const buttons = document.querySelectorAll(".grid-button");
+        let maxWidth = 0;
+        let maxHeight = 0;
+
+        buttons.forEach(function (button) {
+            const buttonRect = button.getBoundingClientRect();
+            maxWidth = Math.max(maxWidth, buttonRect.width);
+            maxHeight = Math.max(maxHeight, buttonRect.height);
+        });
+
+        buttons.forEach(function (button) {
+            button.style.width = maxWidth + "px";
+            button.style.height = maxHeight + "px";
+        });
+    });
+
+    const selectedAttributes = new Set();
+
+    // noinspection JSUnusedGlobalSymbols (being called by the thymeleaf template)
+    function onAttributeButtonClicked(button, attribute) {
+        if (button.classList.contains('selected')) {
+            button.classList.remove('selected');
+            selectedAttributes.delete(attribute);
+        } else {
+            button.classList.add('selected');
+            selectedAttributes.add(attribute);
+            if (selectedAttributes.size > 5) {
+                const firstSelectedButton = document.querySelector('.grid-button.selected');
+                firstSelectedButton.classList.remove('selected');
+                selectedAttributes.delete(firstSelectedButton.textContent);
+            }
+        }
+
+        console.log('Selected Attributes:', Array.from(selectedAttributes));
+    }
+
+    // noinspection JSUnusedGlobalSymbols (used by the thymeleaf template)
+    function createCard(type) {
+        if (selectedAttributes.size === 0) {
+            return
+        }
+
+        const cardCreationRequest = {
+            attributes: Array.from(selectedAttributes),
+            type: type
+        };
+
+        fetch('/card/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(cardCreationRequest),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+
+            return response.json()
+        })
+        .then(data => {
+            displaySuccess(data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            displayError('An error occurred.');
+        });
+    }
+
+    function displayError(errorMessage) {
+        const errorMessageElement = document.createElement('div');
+        errorMessageElement.innerHTML = `
+            <p style="color: red;">Failed to create card: ${errorMessage}</p>
+            <button class="next-page-button" onclick="goToRoot()">Next Card</button>
+        `;
+        errorMessageElement.classList.add('centered-text2');
+        document.body.appendChild(errorMessageElement);
+
+        document.querySelector('.button-grid-container').style.display = 'none';
+        document.querySelector('.centered-text').style.display = 'none';
+    }
+
+    function displaySuccess(responseData) {
+        const successDataElement = document.createElement('div');
+        successDataElement.innerHTML = `
+            <p>Your Card is being created...</p>
+            <p><b>PrintID: ${responseData.id}</b></p>
+            <p>First Card: ${responseData.uuid}</p>
+            <p>Second Card: ${responseData.secondUUID}</p>
+            <button class="next-page-button" onclick="goToRoot()">Next Card</button>
+        `;
+        successDataElement.classList.add('centered-text2');
+        document.body.appendChild(successDataElement);
+
+        document.querySelector('.button-grid-container').style.display = 'none';
+        document.querySelector('.centered-text').style.display = 'none';
+    }
+
+    function goToRoot() {
+        window.location.href = '/';
+    }
+</script>
+</body>
+</html>

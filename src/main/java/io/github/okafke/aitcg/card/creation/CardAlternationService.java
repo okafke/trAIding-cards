@@ -2,7 +2,7 @@ package io.github.okafke.aitcg.card.creation;
 
 import io.github.okafke.aitcg.card.AiTCGCard;
 import io.github.okafke.aitcg.card.AiTCGElement;
-import io.github.okafke.aitcg.card.CreatureStats;
+import io.github.okafke.aitcg.card.CardStats;
 import io.github.okafke.aitcg.llm.Prompts;
 import io.github.okafke.aitcg.llm.gpt.ChatGPT;
 import io.github.okafke.aitcg.llm.gpt.GPTConversation;
@@ -33,22 +33,21 @@ public class CardAlternationService {
     private final DallE3 t2i;
 
     @Async
-    public CompletableFuture<CardAlternation> createEvolution(UUID baseCardUUID, GPTConversation conversation) throws IOException {
+    public CompletableFuture<CardAlternation> createEvolution(UUID baseCardUUID, UUID secondUUID, GPTConversation conversation) throws IOException {
         return createAlternation(baseCardUUID, conversation,
-                Prompts.ONLY_OUTPUT + Prompts.NO_DALL_E + Prompts.EVOLUTION + Prompts.ALTERNATE_DALL_E_REUSE, UnaryOperator.identity());
+                Prompts.ONLY_OUTPUT + Prompts.NO_DALL_E + Prompts.EVOLUTION + Prompts.ALTERNATE_DALL_E_REUSE, UnaryOperator.identity(), secondUUID);
     }
 
     @Async
-    public CompletableFuture<CardAlternation> createOpposite(UUID baseCardUUID, GPTConversation conversation) throws IOException {
+    public CompletableFuture<CardAlternation> createOpposite(UUID baseCardUUID, UUID secondUUID, GPTConversation conversation) throws IOException {
         return createAlternation(baseCardUUID, conversation,
-                Prompts.ONLY_OUTPUT + Prompts.NO_DALL_E + Prompts.OPPOSITE + Prompts.ALTERNATE_DALL_E_REUSE, AiTCGElement::getOpposite);
+                Prompts.ONLY_OUTPUT + Prompts.NO_DALL_E + Prompts.OPPOSITE + Prompts.ALTERNATE_DALL_E_REUSE, AiTCGElement::getOpposite, secondUUID);
     }
 
     @Async
     public CompletableFuture<CardAlternation> createAlternation(
-            UUID baseCardUUID, GPTConversation conversation, String requestDallEPrompt, UnaryOperator<AiTCGElement> element) throws IOException {
-        UUID uuid = UUID.randomUUID();
-        log.info("Creating alternation " + uuid + " for " + baseCardUUID);
+            UUID baseCardUUID, GPTConversation conversation, String requestDallEPrompt, UnaryOperator<AiTCGElement> element, UUID secondUUID) throws IOException {
+        log.info("Creating alternation " + secondUUID + " for " + baseCardUUID);
         conversation.add(GPTMessage.user(requestDallEPrompt));
         GPTMessage dallEPrompt = llm.chat(conversation);
         CompletableFuture<DallEResponse> image = t2i.sendRequest(dallEPrompt.content());
@@ -62,13 +61,13 @@ public class CardAlternationService {
         GPTMessage story = llm.chat(conversation);
         conversation.add(story);
 
-        return CompletableFuture.completedFuture(new CardAlternation(uuid, baseCardUUID, dallEPrompt, name, story, conversation, image, element));
+        return CompletableFuture.completedFuture(new CardAlternation(secondUUID, baseCardUUID, dallEPrompt, name, story, conversation, image, element));
     }
 
     public record CardAlternation(UUID uuid, UUID baseCardUUID, GPTMessage dallEPrompt, GPTMessage name, GPTMessage story,
                                   GPTConversation conversation, CompletableFuture<DallEResponse> image, UnaryOperator<AiTCGElement> elementOperation) {
-        public AiTCGCard awaitAiTCGCard(CreatureStats stats, AiTCGElement element) throws ExecutionException, InterruptedException {
-            return new AiTCGCard(uuid, name.content(), stats, elementOperation.apply(element), baseCardUUID, story.content(), conversation, image.get());
+        public AiTCGCard awaitAiTCGCard(CardStats stats, AiTCGElement element) throws ExecutionException, InterruptedException {
+            return new AiTCGCard(uuid, name.content(), stats, elementOperation.apply(element), baseCardUUID, null, story.content(), conversation, image.get());
         }
     }
 

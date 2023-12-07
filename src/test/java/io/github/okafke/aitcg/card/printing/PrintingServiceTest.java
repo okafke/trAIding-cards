@@ -53,7 +53,7 @@ public class PrintingServiceTest {
             outputStream.write(imageService.toPNG(bufferedImage));
         }
 
-        printingService.printCardJpeg(UUID.randomUUID().toString(), imageService.toJpeg(bufferedImage));
+        printingService.printCardJpeg(UUID.randomUUID().toString(), 0, imageService.toJpeg(bufferedImage));
     }
 
 }

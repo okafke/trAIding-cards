@@ -1,0 +1,200 @@
+Elephant
+Cheetah
+Armadillo
+Albatross
+Platypus
+Komodo Dragon
+Kangaroo
+Goldfish
+Bison
+Parrot
+Hedgehog
+Tarantula
+Chimpanzee
+Ostrich
+Axolotl
+Lynx
+Koala
+Sea Otter
+Giraffe
+Piranha
+Octopus
+Raccoon
+Snow Leopard
+Pufferfish
+Tasmanian Devil
+Panda
+Orangutan
+Gorilla
+Lemur
+Jellyfish
+Toucan
+Sloth
+Alligator
+Hippopotamus
+Fennec Fox
+Penguin
+Wolverine
+Peacock
+Red Panda
+Dingo
+Narwhal
+Macaw
+Quokka
+Snail
+Kangaroo Rat
+Gorilla
+Salamander
+Chimpanzee
+Humpback Whale
+Armadillo
+Kingfisher
+Hummingbird
+Bobcat
+Cockatoo
+Elephant Seal
+Gazelle
+Mantis Shrimp
+Lemming
+Vulture
+Pangolin
+Wolverine
+Firefly
+Mole
+Wombat
+Swordfish
+Tapir
+Praying Mantis
+Walrus
+Ocelot
+Wallaby
+Aardvark
+Manatee
+Armadillo
+Rattlesnake
+Flamingo
+Chameleon
+Gila Monster
+Axolotl
+Lynx
+Porcupine
+Pika
+Hare
+Platypus
+Beluga Whale
+Puffin
+Meerkat
+Anteater
+Quetzal
+Hammerhead Shark
+Red Fox
+Blue Jay
+Dhole
+Capybara
+Tasmanian Tiger
+Zebra
+Nudibranch
+Blue-Ringed Octopus
+Okapi
+Aye-Aye
+Pangolin
+Dog
+Cat
+Fish
+Bird
+Snake
+Mouse
+Rabbit
+Horse
+Cow
+Pig
+Chicken
+Duck
+Sheep
+Goat
+Turtle
+Spider
+Elephant
+Deer
+Fox
+Squirrel
+Frog
+Butterfly
+Bee
+Dolphin
+Penguin
+Gorilla
+Bear
+Monkey
+Tiger
+Lion
+Giraffe
+Koala
+Kangaroo
+Polar Bear
+Wolf
+Bat
+Elephant
+Rhino
+Cheetah
+Owl
+Ant
+Beetle
+Crab
+Jellyfish
+Snail
+Shark
+Octopus
+Mosquito
+Grasshopper
+Seahorse
+Lizard
+Gorilla
+Armadillo
+Hamster
+Guinea Pig
+Parakeet
+Ferret
+Goldfish
+Gecko
+Peacock
+Hummingbird
+Raccoon
+Pigeon
+Crow
+Bat
+Mantis
+Ostrich
+Camel
+Crab
+Chimpanzee
+Bison
+Walrus
+Wombat
+Gopher
+Shrimp
+Lemur
+Donkey
+Zebra
+Panther
+Komodo Dragon
+Kangaroo
+Sloth
+Platypus
+Cheetah
+Meerkat
+Penguin
+Pelican
+Tasmanian Devil
+Porcupine
+Otter
+Gorilla
+Hyena
+Armadillo
+Mongoose
+Tapir
+Rattlesnake
+Praying Mantis
+Koala
+Cougar
+Flamingo

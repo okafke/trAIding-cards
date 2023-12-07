@@ -4,7 +4,7 @@ import com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi;
 import com.twelvemonkeys.imageio.stream.ByteArrayImageInputStream;
 import io.github.okafke.aitcg.card.AiTCGCard;
 import io.github.okafke.aitcg.card.AiTCGElement;
-import io.github.okafke.aitcg.card.CreatureStats;
+import io.github.okafke.aitcg.card.CardStats;
 import lombok.SneakyThrows;
 import org.davidmoten.text.utils.WordWrap;
 import org.springframework.core.io.ClassPathResource;
@@ -159,7 +159,7 @@ public class ImageService {
         g2d.dispose();
     }
 
-    private void drawStats(BufferedImage image, CreatureStats stats) {
+    private void drawStats(BufferedImage image, CardStats stats) {
         Graphics2D g2d = image.createGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
@@ -170,7 +170,7 @@ public class ImageService {
         g2d.drawString(stats.attack() + "", 190, 985);
         g2d.drawString(stats.defense() + "", 330, 985);
         g2d.drawString(stats.speed() + "", 455, 985);
-        g2d.drawString(stats.level() + "", 584, 985);
+        g2d.drawString(stats.magic() + "", 584, 985);
         g2d.dispose();
     }
 

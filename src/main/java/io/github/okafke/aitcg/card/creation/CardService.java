@@ -3,7 +3,7 @@ package io.github.okafke.aitcg.card.creation;
 import io.github.okafke.aitcg.api.CardCreationRequest;
 import io.github.okafke.aitcg.card.AiTCGCard;
 import io.github.okafke.aitcg.card.AiTCGElement;
-import io.github.okafke.aitcg.card.CreatureStats;
+import io.github.okafke.aitcg.card.CardStats;
 import io.github.okafke.aitcg.card.printing.FileService;
 import io.github.okafke.aitcg.card.printing.PrintingService;
 import io.github.okafke.aitcg.card.render.ImageService;
@@ -41,9 +41,8 @@ public class CardService {
     // TODO: produce variant of card, evolution or something? Dall-E-2 can transform existing images
     // TODO: optimization, do not use a conversation but expect entire output at once in a certain format? Would save tokens!
     @Async
-    public void createCard(CardCreationRequest request) throws IOException {
-        UUID uuid = UUID.randomUUID();
-        log.info("Creating card " + uuid + " for request " + request);
+    public void createCard(CardCreationRequest request, int printingId, UUID uuid, UUID secondUUID) throws IOException {
+        log.info(printingId + ": Creating card " + uuid + " for request " + request);
         // create Dall-E prompt
         GPTConversation conversation = llm.conversation();
         GPTMessage promptRequest = GPTMessage.user(Prompts.ONLY_OUTPUT + "Given a " + request.type()
@@ -74,16 +73,16 @@ public class CardService {
 
         // request element for the card
         CompletableFuture<AiTCGElement> elementFuture = elementService.getElement(story, request);
-        CompletableFuture<CardAlternationService.CardAlternation> secondCardFuture = alternationService.createEvolution(uuid, conversation);
-        //CompletableFuture<CardAlternationService.CardAlternation> secondCardFuture = alternationService.createOpposite(uuid, conversation);
+        //CompletableFuture<CardAlternationService.CardAlternation> secondCardFuture = alternationService.createEvolution(uuid, secondUUID, conversation);
+        CompletableFuture<CardAlternationService.CardAlternation> secondCardFuture = alternationService.createOpposite(uuid, secondUUID, conversation);
 
         elementFuture.thenAccept(element -> log.info("Received element " + element + " for card " + uuid + ": " + name));
         image.thenAccept(dallEResponse -> {
             log.info("Received image for card " + uuid + ": " + name);
             elementFuture.thenAccept(element -> {
-                CreatureStats stats = CreatureStats.roll();
+                CardStats stats = CardStats.roll();
                 log.info("Building card " + uuid + " " + name + " with stats " + stats);
-                AiTCGCard card = new AiTCGCard(uuid, name.content(), stats, element, null, story.content(), conversation, dallEResponse);
+                AiTCGCard card = new AiTCGCard(uuid, name.content(), stats, element, null, secondUUID, story.content(), conversation, dallEResponse);
                 try {
                     BufferedImage bufferedImage = imageService.createCard(card);
                     fileService.save(card, imageService.toPNG(bufferedImage));
@@ -93,7 +92,7 @@ public class CardService {
                             AiTCGCard secondCard = cardAlternation.awaitAiTCGCard(stats.increase(25), element);
                             BufferedImage secondCardImage = imageService.createCard(secondCard);
                             fileService.save(secondCard, imageService.toPNG(secondCardImage));
-                            print(card, secondCard, bufferedImage, secondCardImage);
+                            print(card, secondCard, bufferedImage, secondCardImage, printingId);
                         } catch (ExecutionException | InterruptedException | IOException e) {
                             log.error("Failed to create or print second card for cardAlternation " + cardAlternation, e);
                         }
@@ -109,12 +108,12 @@ public class CardService {
         secondCardFuture.join();
     }
 
-    private void print(AiTCGCard card, AiTCGCard secondCard, BufferedImage image, BufferedImage secondImage) {
+    private void print(AiTCGCard card, AiTCGCard secondCard, BufferedImage image, BufferedImage secondImage, int printingId) {
         BufferedImage printImage = imageService.twoCards(image, secondImage);
         try {
             byte[] jpeg = imageService.toJpeg(printImage);
-            fileService.savePrintingImage(card.uuid(), secondCard.uuid(), jpeg);
-            printingService.printCardJpeg(card.name() + " and " + secondCard.name() + " : " + card.uuid(), jpeg);
+            fileService.savePrintingImage(printingId, card.uuid(), secondCard.uuid(), jpeg);
+            printingService.printCardJpeg(printingId + ": " + card.name() + " and " + secondCard.name() + " : " + card.uuid(), printingId, jpeg);
         } catch (IOException e) {
             log.error("Failed to print cards " + card + " " + secondCard, e);
         }

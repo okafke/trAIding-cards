@@ -9,9 +9,10 @@ import java.util.UUID;
 public record AiTCGCard(
         UUID uuid,
         String name,
-        CreatureStats stats,
+        CardStats stats,
         AiTCGElement element,
         @Nullable UUID baseCard,
+        @Nullable UUID nextCard,
         String text,
         GPTConversation conversation,
         DallEResponse dallEResponse

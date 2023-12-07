@@ -42,9 +42,9 @@ public class PrintingService {
         printers.forEach(Printer::update);
     }
 
-    public void printCardJpeg(String info, byte[] jpegBytes) {
+    public void printCardJpeg(String info, int printingId, byte[] jpegBytes) {
         Printer printer = cardPrinter != null ? cardPrinter : getEmptiestPrinter();
-        print(printingIdService.getPrintingId(), info, printer, JPEG_FORMAT, jpegBytes);
+        print(printingId, info, printer, JPEG_FORMAT, jpegBytes);
     }
 
     public void print(int id, @Nullable URI printerIp, String documentFormat, byte[] bytes) {

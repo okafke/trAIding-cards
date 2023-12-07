@@ -41,14 +41,14 @@ public class FileService {
         }
     }
 
-    public void savePrintingImage(UUID uuid1, UUID uuid2, byte[] jpegBytes) {
+    public void savePrintingImage(int printingId, UUID uuid1, UUID uuid2, byte[] jpegBytes) {
         if (!savePrintingImage) {
             return;
         }
 
         //noinspection ResultOfMethodCallIgnored
         Paths.get("printing").toFile().mkdirs();
-        try (FileOutputStream fos = new FileOutputStream(Paths.get("printing", uuid1 + "_" + uuid2 + ".jpeg").toFile())) {
+        try (FileOutputStream fos = new FileOutputStream(Paths.get("printing", printingId + "_" + uuid1 + "_" + uuid2 + ".jpeg").toFile())) {
             fos.write(jpegBytes);
         } catch (IOException e) {
             log.error("Failed to save printing jpeg" + uuid1 + "_" + uuid2, e);
