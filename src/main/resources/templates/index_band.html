@@ -8,6 +8,16 @@
 </head>
 <body>
 
+<div class="rolling-band">
+    <div class="image-container">
+        <th:block th:each="i : ${#numbers.sequence(0, 10)}" th:remove="tag">
+            <th:block th:each="image, iterStat : ${images}">
+                <img th:src="@{'/cards/' + ${image}}" th:alt="'Image ' + ${iterStat.count}">
+            </th:block>
+        </th:block>
+    </div>
+</div>
+
 <div class="centered-text">
     <p>Welcome to tr<b>AI</b>ding-cards.</p>
 </div>

@@ -6,12 +6,12 @@ import io.github.okafke.aitcg.card.AiTCGCard;
 import io.github.okafke.aitcg.card.AiTCGElement;
 import io.github.okafke.aitcg.card.CardStats;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.davidmoten.text.utils.WordWrap;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
@@ -23,6 +23,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class ImageService {
     private static final WebPImageReaderSpi WEB_P_IMAGE_READER_SPI = new WebPImageReaderSpi();
@@ -42,7 +43,9 @@ public class ImageService {
     private static final int WIDTH = 512;
     private static final int HEIGHT = 512;
 
-    public byte[] creatPNG(AiTCGCard card) throws IOException {
+    private static final int MAX_LINES = 6;
+
+    public byte[] createPNG(AiTCGCard card) throws IOException {
         BufferedImage image = createCard(card);
         return toPNG(image);
     }
@@ -84,6 +87,7 @@ public class ImageService {
 
     /**
      * The image has to have a none alpha type!!!
+     * @see BufferedImage#TYPE_INT_RGB
      */
     public byte[] toJpeg(RenderedImage image) throws IOException {
         var os = new ByteArrayOutputStream();
@@ -129,6 +133,7 @@ public class ImageService {
         g2d.dispose();
     }
 
+    // TODO: max lines 6
     private void drawText(BufferedImage image, String textIn) {
         // replace all new line characters, adding a space if two non-space characters would lie directly adjacent to each other.
         String text = removeNewLines(textIn);
@@ -138,9 +143,37 @@ public class ImageService {
         Font font = new Font("Serif", Font.PLAIN, 17);
         g2d.setFont(font);
         g2d.setColor(Color.BLACK);
-
         FontMetrics metrics = g2d.getFontMetrics();
-        List<String> lines = WordWrap.from(text)
+
+        int maxY = MAX_LINES * metrics.getHeight() + metrics.getHeight();
+        var lines = split(text, metrics);
+        double currentMaxY = lines.size() * metrics.getHeight() + metrics.getHeight();
+        if (currentMaxY > maxY) {
+            // TODO: calculate this?
+            for (int i = 16; i > 0; i--) {
+                font = new Font("Serif", Font.PLAIN, i);
+                g2d.setFont(font);
+                g2d.setColor(Color.BLACK);
+                metrics = g2d.getFontMetrics();
+                lines = split(text, metrics);
+                currentMaxY = lines.size() * metrics.getHeight() + metrics.getHeight();
+                if (currentMaxY <= maxY) {
+                    break;
+                }
+            }
+        }
+
+        int y = TEXT_Y_OFFSET + metrics.getHeight();
+        for (String line : lines) {
+            g2d.drawString(line, TEXT_X_OFFSET, y);
+            y += metrics.getHeight();
+        }
+
+        g2d.dispose();
+    }
+
+    private List<String> split(String text, FontMetrics metrics) {
+        return WordWrap.from(text)
                 .maxWidth(TEXT_MAX_WIDTH)
                 .newLine(System.lineSeparator())
                 .includeExtraWordChars("~")
@@ -149,14 +182,6 @@ public class ImageService {
                 .breakWords(true)
                 .stringWidth(s -> metrics.stringWidth(s.toString()))
                 .wrapToList();
-
-        int y = TEXT_Y_OFFSET + metrics.getHeight();
-        for (String line : lines) {
-            g2d.drawString(line, TEXT_X_OFFSET, y);
-            y += g2d.getFontMetrics().getHeight();
-        }
-
-        g2d.dispose();
     }
 
     private void drawStats(BufferedImage image, CardStats stats) {
@@ -179,9 +204,12 @@ public class ImageService {
     }
 
     public static BufferedImage loadFromByteArray(byte[] bytes) throws IOException {
-        var reader = WEB_P_IMAGE_READER_SPI.createReaderInstance();
-        try (ImageInputStream is = new ByteArrayImageInputStream(bytes)) {
-            reader.setInput(is);
+        try {
+            return ImageIO.read(new ByteArrayImageInputStream(bytes));
+        } catch (IOException e) {
+            log.error("Failed to read bytes, trying WebP alone", e);
+            var reader = WEB_P_IMAGE_READER_SPI.createReaderInstance();
+            reader.setInput(new ByteArrayImageInputStream(bytes));
             return reader.read(0);
         }
     }

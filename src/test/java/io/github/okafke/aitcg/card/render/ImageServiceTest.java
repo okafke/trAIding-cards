@@ -1,5 +1,6 @@
 package io.github.okafke.aitcg.card.render;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.okafke.aitcg.TestUtil;
 import io.github.okafke.aitcg.card.AiTCGCard;
 import io.github.okafke.aitcg.card.AiTCGElement;
@@ -38,6 +39,12 @@ public class ImageServiceTest {
     @Value("classpath:fiery_fridge_monster_card.png")
     Resource fieryFridgeMonsterCard;
 
+    @Value("classpath:text_long.json")
+    Resource text_8_lines_json;
+
+    @Value("classpath:text_super_long.json")
+    Resource text_super_long_json;
+
     @Autowired
     private PrintingService printingService;
 
@@ -50,17 +57,17 @@ public class ImageServiceTest {
         AiTCGCard cardWithLongTitle = TestUtil.card("Fiery Fridge Monster, the Terrible!", FRIDGE_TEXT, image);
         AiTCGCard cardWithVeryLongTitle = TestUtil.card("Fiery Fridge Monster, the Terrible Super Fridge with ultra powers the movie!", FRIDGE_TEXT, image);
 
-        byte[] cardWithShortTitleBytes = imageService.creatPNG(cardWithShortTitle);
+        byte[] cardWithShortTitleBytes = imageService.createPNG(cardWithShortTitle);
         try (FileOutputStream outputStream = new FileOutputStream("ignored_images/fiery_fridge_monster_card.png")) {
             outputStream.write(cardWithShortTitleBytes);
         }
 
-        byte[] cardWithLongTitleBytes = imageService.creatPNG(cardWithLongTitle);
+        byte[] cardWithLongTitleBytes = imageService.createPNG(cardWithLongTitle);
         try (FileOutputStream outputStream = new FileOutputStream("ignored_images/fiery_fridge_monster_card_long_title.png")) {
             outputStream.write(cardWithLongTitleBytes);
         }
 
-        byte[] cardWithVeryLongTitleBytes = imageService.creatPNG(cardWithVeryLongTitle);
+        byte[] cardWithVeryLongTitleBytes = imageService.createPNG(cardWithVeryLongTitle);
         try (FileOutputStream outputStream = new FileOutputStream("ignored_images/fiery_fridge_monster_card_very_long_title.png")) {
             outputStream.write(cardWithVeryLongTitleBytes);
         }
@@ -72,7 +79,7 @@ public class ImageServiceTest {
                     """
                     The wooden cello, adorned with carved comical features, came to life as the night fell. With her sound-hole smiles and animated crown pegs, she danced in the moonlight, her bow transforming into a magical wand, conjuring melodic spells. The vivacious background echoed with floating music notes and unfolding staves, while rests blossomed into whimsical objects, creating a joyous and surreal celebration of music in an imaginary world.
                     """, bytes);
-            byte[] celloBytes = imageService.creatPNG(cello);
+            byte[] celloBytes = imageService.createPNG(cello);
             try (FileOutputStream outputStream = new FileOutputStream("ignored_images/cello_card2.png")) {
                 outputStream.write(celloBytes);
             }
@@ -128,5 +135,16 @@ public class ImageServiceTest {
         String expectedOutput5 = "Text with leading and trailing spaces.";
         assertEquals(expectedOutput5, imageService.removeNewLines(inputString5));
     }
+
+    @Test
+    @SneakyThrows
+    public void testLongTextWrapping() {
+        AiTCGCard card_8_lines = new ObjectMapper().readValue(text_8_lines_json.getContentAsByteArray(), AiTCGCard.class);
+        byte[] png = imageService.createPNG(card_8_lines);
+        try (FileOutputStream fos = new FileOutputStream("src/test/resources/text_long.png")) {
+            fos.write(png);
+        }
+    }
+
 
 }

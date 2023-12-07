@@ -73,8 +73,8 @@ public class CardService {
 
         // request element for the card
         CompletableFuture<AiTCGElement> elementFuture = elementService.getElement(story, request);
-        //CompletableFuture<CardAlternationService.CardAlternation> secondCardFuture = alternationService.createEvolution(uuid, secondUUID, conversation);
-        CompletableFuture<CardAlternationService.CardAlternation> secondCardFuture = alternationService.createOpposite(uuid, secondUUID, conversation);
+        CompletableFuture<CardAlternationService.CardAlternation> secondCardFuture = alternationService.createEvolution(uuid, secondUUID, conversation);
+        //CompletableFuture<CardAlternationService.CardAlternation> secondCardFuture = alternationService.createOpposite(uuid, secondUUID, conversation);
 
         elementFuture.thenAccept(element -> log.info("Received element " + element + " for card " + uuid + ": " + name));
         image.thenAccept(dallEResponse -> {
@@ -92,6 +92,7 @@ public class CardService {
                             AiTCGCard secondCard = cardAlternation.awaitAiTCGCard(stats.increase(25), element);
                             BufferedImage secondCardImage = imageService.createCard(secondCard);
                             fileService.save(secondCard, imageService.toPNG(secondCardImage));
+                            log.info("Saved card " + secondCard);
                             print(card, secondCard, bufferedImage, secondCardImage, printingId);
                         } catch (ExecutionException | InterruptedException | IOException e) {
                             log.error("Failed to create or print second card for cardAlternation " + cardAlternation, e);
@@ -109,6 +110,7 @@ public class CardService {
     }
 
     private void print(AiTCGCard card, AiTCGCard secondCard, BufferedImage image, BufferedImage secondImage, int printingId) {
+        log.info("Printing " + card.uuid() + ", " + secondCard.uuid());
         BufferedImage printImage = imageService.twoCards(image, secondImage);
         try {
             byte[] jpeg = imageService.toJpeg(printImage);

@@ -11,7 +11,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -55,17 +54,16 @@ public class FileService {
         }
     }
 
-    public List<String> getCardNames() {
-        File directory = Paths.get("cards").toFile();
-        File[] files = directory.listFiles();
-        if (directory.exists() && directory.isDirectory() && files != null) {
-            return Arrays.stream(files)
-                    .filter(file -> file.isFile() && file.getName().endsWith(".json"))
-                    .map(file -> file.getName().substring(0, file.getName().length() - ".json".length()))
-                    .collect(Collectors.toList());
-        }
+    public File[] getFilesInCardsFolder() {
+        File[] files = Paths.get("cards").toFile().listFiles();
+        return files == null ? new File[0] : files;
+    }
 
-        return new ArrayList<>();
+    public List<String> getCardNames() {
+        return Arrays.stream(getFilesInCardsFolder())
+                .filter(file -> file.isFile() && file.getName().endsWith(".json"))
+                .map(file -> file.getName().substring(0, file.getName().length() - ".json".length()))
+                .collect(Collectors.toList());
     }
 
 }

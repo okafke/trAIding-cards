@@ -1,5 +1,7 @@
 package io.github.okafke.aitcg.t2i.dalle;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -9,6 +11,7 @@ import org.springframework.lang.Nullable;
 import java.util.List;
 import java.util.Objects;
 
+@JsonIgnoreProperties(ignoreUnknown = true) // idk why the json contains "firstData"...
 public record DallEResponse(long created, List<DallEResponseData> data) {
     public record DallEResponseData(
             @JsonSerialize(using = Base64ByteArrayJson.Serializer.class)
