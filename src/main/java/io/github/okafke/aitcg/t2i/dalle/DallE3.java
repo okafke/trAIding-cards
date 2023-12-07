@@ -41,10 +41,12 @@ public class DallE3 {
 
     @Async
     public CompletableFuture<DallEResponse> sendRequest(String prompt) throws DallEException {
+        log.info("Requesting card " + prompt);
         // TODO: use natural style?
         DallERequest request = new DallERequest(model, prompt, "vivid", "b64_json", quality, size, n);
         try {
             DallEResponse response = openaiRestTemplate.postForObject(apiUrl, request, DallEResponse.class);
+            log.info("Received response for prompt " + prompt);
             if (response == null || response.data() == null || response.data().isEmpty()) {
                 throw new DallEException("Response to " + request + " was " + response);
             }

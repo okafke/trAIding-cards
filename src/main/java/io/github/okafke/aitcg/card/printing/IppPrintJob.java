@@ -21,6 +21,7 @@ import static com.hp.jipp.model.Types.requestingUserName;
 @RequiredArgsConstructor
 public class IppPrintJob {
     private final String documentFormat;
+    @ToString.Exclude
     private final Printer printer;
     @ToString.Exclude
     private final byte[] bytes;

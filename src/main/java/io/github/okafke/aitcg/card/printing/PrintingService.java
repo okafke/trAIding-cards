@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class PrintingService {
     public static final String JPEG_FORMAT = "image/jpeg";
 
-    private final Set<IppPrintJob> printingHistory = new LinkedHashSet<>();
+    private final Set<IppPrintJob> printingHistory = Collections.synchronizedSet(new LinkedHashSet<>());
     private final PrintingIdService printingIdService;
     private final List<Printer> printers;
 
@@ -40,6 +40,9 @@ public class PrintingService {
     @Scheduled(timeUnit = TimeUnit.SECONDS, fixedDelay = 2)
     public void updateQueues() {
         printers.forEach(Printer::update);
+        if (cardPrinter != null) {
+            cardPrinter.update();
+        }
     }
 
     public void printCardJpeg(String info, int printingId, byte[] jpegBytes) {
@@ -59,24 +62,31 @@ public class PrintingService {
         }
 
         IppPrintJob printJob = new IppPrintJob(documentFormat, printer, bytes, id, info == null ? "" : info);
+        log.info("Created printJob " + printJob);
         print(printJob, false);
     }
 
     public void print(IppPrintJob job, boolean addFirst) {
-        if (addFirst) {
-            job.getPrinter().getJobs().addFirst(job);
-        } else {
-            job.getPrinter().getJobs().add(job);
+        synchronized (job.getPrinter()) {
+            if (addFirst) {
+                job.getPrinter().getJobs().addFirst(job);
+            } else {
+                job.getPrinter().getJobs().add(job);
+            }
         }
 
         printingHistory.add(job);
     }
 
     private @Nullable Printer getPrinter(URI printerIp) {
+        var printers = new ArrayList<>(this.printers);
+        Collections.shuffle(printers);
         return printers.stream().filter(p -> printerIp.equals(p.getPrinterIp())).findFirst().orElse(null);
     }
 
     private @Nullable Printer getEmptiestPrinter() {
+        var printers = new ArrayList<>(this.printers);
+        Collections.shuffle(printers);
         return printers.stream().min(Comparator.comparingInt(p -> p.getJobs().size())).orElse(null);
     }
 

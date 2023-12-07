@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URI;
@@ -12,6 +13,7 @@ import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
 // TODO: solve this with a blocking thread that we notify, instead of polling?
+@Slf4j
 @Getter
 @ToString
 @EqualsAndHashCode
@@ -22,12 +24,13 @@ public class Printer {
     private long lastJob;
 
     public void update() {
-        if (System.nanoTime() - lastJob < TimeUnit.SECONDS.toNanos(60)) {
+        if (System.nanoTime() - lastJob < TimeUnit.SECONDS.toNanos(70)) {
             return;
         }
 
         IppPrintJob job = jobs.poll();
         if (job != null) {
+            log.info("Found non-null print job");
             try {
                 job.print();
             } finally {

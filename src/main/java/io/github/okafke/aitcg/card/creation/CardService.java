@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -73,8 +74,9 @@ public class CardService {
 
         // request element for the card
         CompletableFuture<AiTCGElement> elementFuture = elementService.getElement(story, request);
-        CompletableFuture<CardAlternationService.CardAlternation> secondCardFuture = alternationService.createEvolution(uuid, secondUUID, conversation);
-        //CompletableFuture<CardAlternationService.CardAlternation> secondCardFuture = alternationService.createOpposite(uuid, secondUUID, conversation);
+        CompletableFuture<CardAlternationService.CardAlternation> secondCardFuture = new Random().nextBoolean()
+                        ? alternationService.createEvolution(uuid, secondUUID, conversation)
+                        : alternationService.createOpposite(uuid, secondUUID, conversation);
 
         elementFuture.thenAccept(element -> log.info("Received element " + element + " for card " + uuid + ": " + name));
         image.thenAccept(dallEResponse -> {
@@ -112,9 +114,12 @@ public class CardService {
     private void print(AiTCGCard card, AiTCGCard secondCard, BufferedImage image, BufferedImage secondImage, int printingId) {
         log.info("Printing " + card.uuid() + ", " + secondCard.uuid());
         BufferedImage printImage = imageService.twoCards(image, secondImage);
+        log.info("Created two card " + card.uuid() + ", " + secondCard.uuid());
         try {
             byte[] jpeg = imageService.toJpeg(printImage);
+            log.info("Got Jpeg bytes for " + card.uuid() + ", " + secondCard.uuid());
             fileService.savePrintingImage(printingId, card.uuid(), secondCard.uuid(), jpeg);
+            log.info("Sending Jpeg bytes to printer " + card.uuid() + ", " + secondCard.uuid());
             printingService.printCardJpeg(printingId + ": " + card.name() + " and " + secondCard.name() + " : " + card.uuid(), printingId, jpeg);
         } catch (IOException e) {
             log.error("Failed to print cards " + card + " " + secondCard, e);

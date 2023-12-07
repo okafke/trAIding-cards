@@ -3,6 +3,7 @@ package io.github.okafke.aitcg.cli;
 import io.github.okafke.aitcg.card.printing.IppPrintJob;
 import io.github.okafke.aitcg.card.printing.PrintingService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
@@ -11,6 +12,9 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.commands.Quit;
 import org.springframework.shell.table.*;
+
+import java.io.File;
+import java.io.FileInputStream;
 
 @ShellComponent
 @RequiredArgsConstructor(onConstructor_={@Autowired})
@@ -33,6 +37,16 @@ public class Commands implements Quit.Command {
         IppPrintJob job = printingService.getPrintingHistory().stream().filter(j -> j.getId() == id).findFirst().orElseThrow(() -> new CommandException("Failed to find PrintJob with id " + id));
         printingService.print(job, true);
         return "Reprinting job " + job;
+    }
+
+    @SneakyThrows
+    @ShellMethod(value = "Prints a file", key = "printfile")
+    public String printFile(File file) {
+        try (FileInputStream inputStream = new FileInputStream(file)) {
+            byte[] bytes = inputStream.readAllBytes();
+            printingService.printCardJpeg("Command " + file, printingService.getPrintingIdService().getPrintingId(), bytes);
+        }
+        return "Printing file " + file;
     }
 
     @ShellMethod(value = "Exits the application.", key = {"quit", "exit"})
