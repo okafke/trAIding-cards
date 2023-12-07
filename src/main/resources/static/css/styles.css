@@ -10,6 +10,11 @@ body, html {
     padding: 0;
     background: black;
 }
+.button-container {
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+}
 
 .center-container {
     top: 50%;
