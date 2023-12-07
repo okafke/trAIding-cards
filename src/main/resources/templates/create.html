@@ -1,20 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
+<link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}">
 <head>
     <title>trAIding-cards</title>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif; /* Set a generic font family */
-        }
-
-        :root, .title, .label {
-            background-color: black;
-            color: white !important;
-            overflow: hidden;
-        }
-
         .button-grid-container {
             display: flex;
             justify-content: center;
@@ -35,7 +24,7 @@
             width: 100%;
             white-space: normal;
             padding: 10px 20px;
-            background-color: #1c51a7;
+            background-color: firebrick;
             color: white;
             border: none;
             border-radius: 5px;
@@ -46,37 +35,13 @@
 
         /*noinspection CssUnusedSymbol*/
         .grid-button.selected {
-            background-color: #2a6eb4;
-        }
-
-        .centered-text {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        /* TODO: AHHHHHHHHHHHHHHHHHHHHHHH */
-        /*noinspection CssUnusedSymbol*/
-        .centered-text2 {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .next-page-button {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #1c51a7;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
+            background-color: orangered;
         }
     </style>
 </head>
 <body>
 
-<div class="centered-text">
+<div class="centered-text light-text">
     <p th:text="${title_text}"></p>
     <td>
         <button th:if="${type != null}" class="next-page-button" th:attr="onclick=|createCard('${type}')|">
@@ -191,13 +156,12 @@
     function displaySuccess(responseData) {
         const successDataElement = document.createElement('div');
         successDataElement.innerHTML = `
-            <p>Your Card is being created...</p>
-            <p><b>PrintID: ${responseData.id}</b></p>
-            <p>First Card: ${responseData.uuid}</p>
-            <p>Second Card: ${responseData.secondUUID}</p>
-            <button class="next-page-button" onclick="goToRoot()">Next Card</button>
+            <p class="centered-text">Your Card is being created!</p>
+            <p class="centered-text"><b>PrintID: ${responseData.id}</b></p>
+            <button class="next-page-button" onclick="goToRoot()">Create next Card</button>
         `;
         successDataElement.classList.add('centered-text2');
+        successDataElement.classList.add('center-container');
         document.body.appendChild(successDataElement);
 
         document.querySelector('.button-grid-container').style.display = 'none';

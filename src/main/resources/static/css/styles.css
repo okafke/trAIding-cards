@@ -1,19 +1,49 @@
-body {
+@font-face {
+    font-family: 'Vinque';
+    src: url('vinque.otf') format('opentype'); /* Adjust the path if necessary */
+    font-weight: normal;
+    font-style: normal;
+}
+
+body, html {
     margin: 0;
     padding: 0;
+    background: black;
 }
 
-:root, .title, .label {
-    background-color: black;
-    color: white !important;
-    overflow: hidden;
+.center-container {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1; /* Ensure that the content is above the background */
+    position: absolute;
+    width: 300px;
+    background: burlywood;
+    border-radius: 4px;
+    border: 1px solid firebrick;
+    color: black;
+    padding: 10px 30px;
 }
 
-.rolling-band {
-    margin-top: 20px;
+.background-container {
+    position: absolute;
     width: 100%;
-    height: 50vh;
-    overflow: hidden;
+    height: 200%; /* Make it twice as tall to allow scrolling */
+    background: url('../card-background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    animation: moveBackground 120s linear infinite; /* Adjust the duration as needed */
+}
+
+@keyframes moveBackground {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-50%);
+    }
+    100% {
+        transform: translateY(0);
+    }
 }
 
 .image-container {
@@ -38,14 +68,20 @@ body {
 
 .centered-text {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 10px;
+    font-size: 1.7rem;
+    font-family: 'Vinque', sans-serif;
+}
+
+.light-text {
+    color: burlywood;
 }
 
 .next-page-button {
     display: block;
     margin: 20px auto;
     padding: 10px 20px;
-    background-color: #1c51a7;
+    background-color: firebrick;
     color: white;
     border: none;
     border-radius: 5px;
