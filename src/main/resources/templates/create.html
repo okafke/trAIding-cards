@@ -43,11 +43,12 @@
 
 <div class="centered-text light-text">
     <p th:text="${title_text}"></p>
-    <td>
+    <div class="button-container">
+        <button th:if="${type != null}" class="next-page-button" onclick="goToRoot()">Restart</button>
         <button th:if="${type != null}" class="next-page-button" th:attr="onclick=|createCard('${type}')|">
             Create Card
         </button>
-    </td>
+    </div>
 </div>
 
 <div class="button-grid-container">
