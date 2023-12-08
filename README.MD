@@ -29,9 +29,9 @@ You can find all cards generated during the Digital Science Night in the <a href
 > E.g. that includes lots of the specific printer code and printer ips.
 
 Clone the repository. Create a file called `env.properties` in [src/main/resources](src/main/resources) and add your
-OpenAI API key:
+OpenAI [API key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-api-key):
 ```properties
-OPEN_AI_API_KEY=<your OpenAI key>
+openai.api.key=<your OpenAI key>
 ```
 Then execute:
 ```
@@ -39,3 +39,4 @@ Then execute:
 ```
 Visit [http://localhost:8080](http://localhost:8080).
 Start creating cards :)
+Based on the current cost of the Openai API (08/12/2023) each card costs about 5–10 cents.
