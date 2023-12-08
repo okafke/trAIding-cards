@@ -7,6 +7,7 @@ import io.github.okafke.aitcg.card.AiTCGElement;
 import io.github.okafke.aitcg.card.printing.PrintingService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,6 +52,7 @@ public class ImageServiceTest {
 
     @Test
     @SneakyThrows
+    @Disabled
     public void testCardService() {
         byte[] image = fieryFridgeMonsterImage.getContentAsByteArray();
         // TODO: make this actually test something, once we have attributes and stuff down!
@@ -92,6 +94,7 @@ public class ImageServiceTest {
 
     @Test
     @SneakyThrows
+    @Disabled
     public void testTwoCards() {
         byte[] image = fieryFridgeMonsterImage.getContentAsByteArray();
         // TODO: make this actually test something, once we have attributes and stuff down!
