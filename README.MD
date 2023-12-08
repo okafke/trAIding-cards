@@ -1,4 +1,4 @@
-<font size="+10"><p align="center">tr<b>AI</b>ding-cards</p></font>
+<h1 align="center" style="font-weight: normal;">tr<b>AI</b>ding-cards</h1>
 <p align="center">An AI generated trading card game.</p>
 <p align="center"><a href="">This project was part of the 2023 Digital Science Night</a></p>
 <p align="center">DiffusionBooth | tr<b>AI</b>ding-cards | <a href="https://github.com/okafke/trAIding-cards-gallery">tr<b>AI</b>ding-cards-gallery</a></p>
