@@ -18,6 +18,7 @@ import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -72,6 +73,7 @@ public class ImageServiceTest {
             outputStream.write(cardWithVeryLongTitleBytes);
         }
 
+        /*
         try (var fis = new FileInputStream(Paths.get("ignored_images", "cello.webp").toFile())) {
             byte[] bytes = fis.readAllBytes();
             AiTCGCard cello = TestUtil.card("Melody Queen",
@@ -83,7 +85,7 @@ public class ImageServiceTest {
             try (FileOutputStream outputStream = new FileOutputStream("ignored_images/cello_card2.png")) {
                 outputStream.write(celloBytes);
             }
-        }
+        }*/
 
         //assertArrayEquals(imageWithShortTitle.getContentAsByteArray(), cardWithShortTitleBytes);
     }
@@ -100,20 +102,6 @@ public class ImageServiceTest {
         byte[] bytes = imageService.toPNG(bufferedImage);
         try (FileOutputStream outputStream = new FileOutputStream("ignored_images/fiery_fridge_two_cards.png")) {
             outputStream.write(bytes);
-        }
-    }
-
-    @Test
-    @SneakyThrows
-    public void testTwoCards2() {
-        try (FileInputStream fis = new FileInputStream(Paths.get("ignored_images", "cello_card2.png").toFile());
-             FileInputStream fis2 = new FileInputStream(Paths.get("images", "12c8829f-106e-4f33-b5cb-09af9b3b4321-card.webp").toFile())) {
-            BufferedImage image1 = ImageIO.read(fis);
-            BufferedImage image2 = ImageIO.read(fis2);
-            BufferedImage bufferedImage = imageService.twoCards(image1, image2);
-            try (FileOutputStream outputStream = new FileOutputStream("ignored_images/two_cards_cello.jpeg")) {
-                ImageIO.write(bufferedImage, "jpeg", outputStream);
-            }
         }
     }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.okafke.aitcg.card.AiTCGCard;
 import io.github.okafke.aitcg.card.render.ImageService;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +21,7 @@ public class RegenerateCardsTest {
     private ImageService imageService;
 
     @Test
+    @Disabled("This is not a test but a tool to regenerate cards from json.")
     public void generateCardsInCardsFolder() {
         for (File file : fileService.getFilesInCardsFolder()) {
             if (file.getName().endsWith(".json")) {
