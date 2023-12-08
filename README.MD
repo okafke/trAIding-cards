@@ -1,7 +1,7 @@
-<font size="+10"><p style="text-align: center;">tr<b>AI</b>ding-cards</p></font>
-<p style="text-align: center;">An AI generated trading card game.</p>
-<p style="text-align: center;"><a href="">This project was part of the 2023 Digital Science Night</a></p>
-<p style="text-align: center;">DiffusionBooth | tr<b>AI</b>ding-cards | <a href="https://github.com/okafke/trAIding-cards-gallery">tr<b>AI</b>ding-cards-gallery</a></p>
+<font size="+10"><p align="center">tr<b>AI</b>ding-cards</p></font>
+<p align="center">An AI generated trading card game.</p>
+<p align="center"><a href="">This project was part of the 2023 Digital Science Night</a></p>
+<p align="center">DiffusionBooth | tr<b>AI</b>ding-cards | <a href="https://github.com/okafke/trAIding-cards-gallery">tr<b>AI</b>ding-cards-gallery</a></p>
 
 <p style="text-align: center;">Are 151 Pokémon not enough for you? Ever wanted to see what a hungry fridge on fire looks like? A demonic post box? Or the Kitchen Mixer Overlord? Let your imagination run wild:</p>
 
