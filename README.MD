@@ -9,7 +9,7 @@ Ever wanted to see what a hungry fridge on fire looks like?
 A demonic post box?
 Or the Kitchen Mixer Overlord? 
 Let your imagination run wild: tr<b>AI</b>ding-cards uses Dall-E and ChatGPT to create cards for you.
-You can find all cards generated during the Digital Science Night in the [Gallery](https://github.com/okafke/trAIding-cards-gallery).
+You can find all cards generated during the Digital Science Night in the <a href="https://github.com/okafke/trAIding-cards-gallery">Gallery</a>.
 </p>
 
 <p align="center">
