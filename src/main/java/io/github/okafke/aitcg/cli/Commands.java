@@ -1,9 +1,15 @@
 package io.github.okafke.aitcg.cli;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.okafke.aitcg.card.AiTCGCard;
+import io.github.okafke.aitcg.card.creation.CardAlternationService;
+import io.github.okafke.aitcg.card.printing.FileService;
 import io.github.okafke.aitcg.card.printing.IppPrintJob;
 import io.github.okafke.aitcg.card.printing.PrintingService;
+import io.github.okafke.aitcg.card.render.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
@@ -15,12 +21,37 @@ import org.springframework.shell.table.*;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
+@Slf4j
 @ShellComponent
 @RequiredArgsConstructor(onConstructor_={@Autowired})
 public class Commands implements Quit.Command {
+    private final CardAlternationService alternationService;
     private final ApplicationContext applicationContext;
     private final PrintingService printingService;
+    private final ImageService imageService;
+    private final FileService fileService;
+
+    @SneakyThrows
+    @ShellMethod(value = "Evolves the given card", key = "evolve")
+    public void evolve(File file) {
+        AiTCGCard card = new ObjectMapper().readValue(file, AiTCGCard.class);
+        log.info("Creating evolution for " + card.name());
+        UUID uuid = UUID.randomUUID();
+        alternationService.createEvolution(card.uuid(), uuid, card.conversation()).thenAccept(alternation -> {
+            try {
+                AiTCGCard evolutionCard = alternation.awaitAiTCGCard(card.stats().increase(25), card.element());
+                log.info("Created evolution '" + evolutionCard.name() + "' for " + card.name());
+                byte[] png = imageService.createPNG(evolutionCard);
+                fileService.save(evolutionCard, png);
+            } catch (IOException | ExecutionException | InterruptedException e) {
+                log.error("Failed to produce evolution for " + card.name());
+            }
+        });
+    }
 
     @ShellMethod(value = "Lists print jobs", key = "jobs")
     public Table jobs() {

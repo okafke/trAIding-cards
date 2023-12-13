@@ -50,15 +50,18 @@ public class CardAlternationService {
         log.info("Creating alternation " + secondUUID + " for " + baseCardUUID);
         conversation.add(GPTMessage.user(requestDallEPrompt));
         GPTMessage dallEPrompt = llm.chat(conversation);
+        log.info("Got Dall-E prompt for alternation " + secondUUID + ": " + dallEPrompt);
         CompletableFuture<DallEResponse> image = t2i.sendRequest(dallEPrompt.content());
         conversation.add(dallEPrompt);
         conversation.add(GPTMessage.user(Prompts.ONLY_OUTPUT + Prompts.ALTERNATE_NAME));
         conversation.max_tokens(20);
         GPTMessage name = llm.chat(conversation);
+        log.info("Got name for alternation " + secondUUID + ": " + name);
         conversation.max_tokens(null);
         conversation.add(name);
         conversation.add(GPTMessage.user(Prompts.ONLY_OUTPUT + Prompts.ALTERNATE_STORY));
         GPTMessage story = llm.chat(conversation);
+        log.info("Got story for alternation " + secondUUID + ": " + story);
         conversation.add(story);
 
         return CompletableFuture.completedFuture(new CardAlternation(secondUUID, baseCardUUID, dallEPrompt, name, story, conversation, image, element));

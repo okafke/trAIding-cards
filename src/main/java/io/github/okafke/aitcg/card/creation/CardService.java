@@ -74,9 +74,8 @@ public class CardService {
 
         // request element for the card
         CompletableFuture<AiTCGElement> elementFuture = elementService.getElement(story, request);
-        CompletableFuture<CardAlternationService.CardAlternation> secondCardFuture = new Random().nextBoolean()
-                        ? alternationService.createEvolution(uuid, secondUUID, conversation)
-                        : alternationService.createOpposite(uuid, secondUUID, conversation);
+        CompletableFuture<CardAlternationService.CardAlternation> secondCardFuture = alternationService.createEvolution(uuid, secondUUID, conversation);
+                        //: alternationService.createOpposite(uuid, secondUUID, conversation);
 
         elementFuture.thenAccept(element -> log.info("Received element " + element + " for card " + uuid + ": " + name));
         image.thenAccept(dallEResponse -> {

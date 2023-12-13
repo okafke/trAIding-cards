@@ -6,6 +6,6 @@ spring:
 spring:
   shell:
     interactive:
-      enabled: false
+      enabled: true
     script:
-      enabled: false
+      enabled: true

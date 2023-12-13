@@ -12,7 +12,7 @@ import java.util.Arrays;
 public class ApiTest {
     public static void main(String[] args) {
         // Create a sample DTO
-        CardCreationRequest cardRequest = new CardCreationRequest(Arrays.asList("magic", "gigantic", "ancient"), "toaster");
+        CardCreationRequest cardRequest = new CardCreationRequest(Arrays.asList("anatomically accurate", "correctly colored", "insanely cute"), "lynx");
 
         // Set the API endpoint URL
         String apiUrl = "http://localhost:8080/card/create"; // Replace with your actual API endpoint
