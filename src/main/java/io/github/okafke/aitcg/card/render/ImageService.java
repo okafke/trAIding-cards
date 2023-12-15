@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
@@ -27,23 +28,10 @@ import java.util.Map;
 @Service
 public class ImageService {
     private static final WebPImageReaderSpi WEB_P_IMAGE_READER_SPI = new WebPImageReaderSpi();
+    private static final BufferedImage CARD_SYMBOL = loadFromClassPathResource(new ClassPathResource("images/empty.webp"));
     private static final Map<AiTCGElement, BufferedImage> TEMPLATES = loadCardTemplates();
     private static final BufferedImage DEFAULT_TEMPLATE = loadDefaultCardTemplate();
-    private static final int IMAGE_X_OFFSET = 131;
-    private static final int IMAGE_Y_OFFSET = 214;
-
-    private static final int TITLE_X_OFFSET = 76;
-    private static final int TITLE_Y_OFFSET = 106;
-    private static final int TITLE_MAX_WIDTH = 550;
-
-    private static final int TEXT_X_OFFSET = 100;
-    private static final int TEXT_Y_OFFSET = 826;
-    private static final int TEXT_MAX_WIDTH = 569;
-
-    private static final int WIDTH = 512;
-    private static final int HEIGHT = 512;
-
-    private static final int MAX_LINES = 6;
+    private final CardFormat format = CardFormat.SYMBOL;
 
     public byte[] createPNG(AiTCGCard card) throws IOException {
         BufferedImage image = createCard(card);
@@ -85,6 +73,14 @@ public class ImageService {
         return os.toByteArray();
     }
 
+    public BufferedImage convertType(BufferedImage bufferedImage, int type) {
+        BufferedImage result = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), type);
+        Graphics2D g2d = result.createGraphics();
+        g2d.drawImage(bufferedImage, 0, 0, null);
+        g2d.dispose();
+        return result;
+    }
+
     /**
      * The image has to have a none alpha type!!!
      * @see BufferedImage#TYPE_INT_RGB
@@ -95,9 +91,51 @@ public class ImageService {
         return os.toByteArray();
     }
 
+    public BufferedImage addCardSymbol(BufferedImage image, Color color, String cardSymbol) {
+        Graphics2D g2d = image.createGraphics();
+        g2d.drawImage(CARD_SYMBOL, format.cardSymbolX(), format.cardSymbolY(), null);
+
+        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        Font font = new Font("Serif", Font.BOLD, cardSymbol.length() > 1 ? 42 : 44);
+        g2d.setFont(font);
+        g2d.setColor(color);
+        FontMetrics metrics = g2d.getFontMetrics();
+        Rectangle2D bounds = metrics.getStringBounds(cardSymbol, g2d);
+        //g2d.drawString(cardSymbol, (int) (format.cardSymbolX() + CARD_SYMBOL.getWidth() / 2 - bounds.getWidth() / 2), (int) (format.cardSymbolY() + CARD_SYMBOL.getHeight() / 2 - bounds.getHeight() / 2 + metrics.getAscent()));
+        if (cardSymbol.length() > 1) {
+            writeStringWithShadow(cardSymbol, (int) (format.cardSymbolX() + CARD_SYMBOL.getWidth() / 2 - bounds.getWidth() / 2), (int) (format.cardSymbolY() + CARD_SYMBOL.getHeight() / 2 - bounds.getHeight() / 2 + metrics.getAscent()), g2d);
+
+        } else {
+            writeStringWithShadow(cardSymbol, (int) (format.cardSymbolX() + 2 + CARD_SYMBOL.getWidth() / 2 - bounds.getWidth() / 2), (int) (format.cardSymbolY() - 2 + CARD_SYMBOL.getHeight() / 2 - bounds.getHeight() / 2 + metrics.getAscent()), g2d);
+        }
+
+        g2d.dispose();
+        return image;
+    }
+
+    private void writeStringWithShadow(String string, int x, int y, Graphics2D graphics2D) {
+        Color color = graphics2D.getColor();
+        /*boolean drawLarge = true;
+        if (drawLarge) {
+            Font font = graphics2D.getFont();
+            Font largeFont = new Font(font.getName(), font.getStyle(), font.getSize() + 4);
+            graphics2D.setFont(largeFont);
+            graphics2D.setColor(color.equals(Color.RED) ? Color.BLACK : Color.RED);
+            graphics2D.drawString(string, x - 2, y);
+            graphics2D.setFont(font);
+        } else {*/
+            graphics2D.setColor(Color.GRAY);
+            graphics2D.drawString(string, x + 3, y + 3);
+        //}
+
+        graphics2D.setColor(color);
+        graphics2D.drawString(string, x, y);
+    }
+
     private BufferedImage scale(BufferedImage image) {
-        double scaleX = (double) WIDTH / image.getWidth();
-        double scaleY = (double) HEIGHT / image.getHeight();
+        double scaleX = (double) format.width() / image.getWidth();
+        double scaleY = (double) format.height() / image.getHeight();
         AffineTransform scaleTransform = AffineTransform.getScaleInstance(scaleX, scaleY);
         AffineTransformOp op = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
         return op.filter(image, null);
@@ -108,7 +146,7 @@ public class ImageService {
         Graphics2D g2d = result.createGraphics();
 
         g2d.drawImage(template, 0, 0, null);
-        g2d.drawImage(overlay, IMAGE_X_OFFSET, IMAGE_Y_OFFSET, null);
+        g2d.drawImage(overlay, format.imageXOffset(), format.imageYOffset(), null);
         g2d.dispose();
 
         return result;
@@ -123,10 +161,10 @@ public class ImageService {
         g2d.setColor(Color.BLACK);
 
         FontMetrics metrics = g2d.getFontMetrics();
-        double scale = Math.min(1.0, (double) TITLE_MAX_WIDTH / metrics.stringWidth(title));
-        int x = (int) (TITLE_X_OFFSET / (Math.max(0.01, scale)));
+        double scale = Math.min(1.0, (double) format.titleMaxWidth() / metrics.stringWidth(title));
+        int x = (int) (format.titleXOffset() / (Math.max(0.01, scale)));
         // this ensures that the text stays centered in the middle of the white title box, if someone has a better solution, yes please
-        int y = (int) (TITLE_Y_OFFSET / (Math.max(0.01, scale)) - (1.0 - scale) * metrics.getHeight() * 0.5);
+        int y = (int) (format.titleYOffset() / (Math.max(0.01, scale)) - (1.0 - scale) * metrics.getHeight() * 0.5);
 
         g2d.scale(scale, scale);
         g2d.drawString(title, x, y);
@@ -145,7 +183,7 @@ public class ImageService {
         g2d.setColor(Color.BLACK);
         FontMetrics metrics = g2d.getFontMetrics();
 
-        int maxY = MAX_LINES * metrics.getHeight() + metrics.getHeight();
+        int maxY = format.maxLines() * metrics.getHeight() + metrics.getHeight();
         var lines = split(text, metrics);
         double currentMaxY = lines.size() * metrics.getHeight() + metrics.getHeight();
         if (currentMaxY > maxY) {
@@ -163,9 +201,9 @@ public class ImageService {
             }
         }
 
-        int y = TEXT_Y_OFFSET + metrics.getHeight();
+        int y = format.textYOffset() + metrics.getHeight();
         for (String line : lines) {
-            g2d.drawString(line, TEXT_X_OFFSET, y);
+            g2d.drawString(line, format.textXOffset(), y);
             y += metrics.getHeight();
         }
 
@@ -174,7 +212,7 @@ public class ImageService {
 
     private List<String> split(String text, FontMetrics metrics) {
         return WordWrap.from(text)
-                .maxWidth(TEXT_MAX_WIDTH)
+                .maxWidth(format.textMaxWidth())
                 .newLine(System.lineSeparator())
                 .includeExtraWordChars("~")
                 .excludeExtraWordChars("_")
@@ -212,6 +250,11 @@ public class ImageService {
             reader.setInput(new ByteArrayImageInputStream(bytes));
             return reader.read(0);
         }
+    }
+
+    @SneakyThrows
+    private static BufferedImage loadFromClassPathResource(ClassPathResource classPathResource) {
+        return loadFromByteArray(classPathResource.getContentAsByteArray());
     }
 
     @SneakyThrows

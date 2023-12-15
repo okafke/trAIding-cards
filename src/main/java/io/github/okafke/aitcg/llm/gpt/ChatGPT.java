@@ -1,6 +1,5 @@
 package io.github.okafke.aitcg.llm.gpt;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Getter
 @Component
 @RequiredArgsConstructor(onConstructor_={@Autowired})
 public class ChatGPT {

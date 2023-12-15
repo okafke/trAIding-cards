@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -143,6 +144,18 @@ public class ImageServiceTest {
         byte[] png = imageService.createPNG(card_8_lines);
         try (FileOutputStream fos = new FileOutputStream("src/test/resources/text_long.png")) {
             fos.write(png);
+        }
+    }
+
+    @Test
+    @SneakyThrows
+    public void testAddCardSymbol() {
+        byte[] bytes = fieryFridgeMonsterImage.getContentAsByteArray();
+        AiTCGCard card = TestUtil.card("Fiery Hungry Fridge", FRIDGE_TEXT, bytes);
+        BufferedImage image = imageService.createCard(card);
+        image = imageService.addCardSymbol(image, Color.BLACK, "K");
+        try (FileOutputStream fos = new FileOutputStream(Paths.get("ignored_images", "TestCardSymbol.png").toFile())) {
+            fos.write(imageService.toPNG(image));
         }
     }
 
