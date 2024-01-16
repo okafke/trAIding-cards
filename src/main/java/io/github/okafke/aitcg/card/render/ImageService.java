@@ -50,6 +50,12 @@ public class ImageService {
         return image;
     }
 
+    public BufferedImage cropImage(BufferedImage originalImage, int topOffset, int bottomOffset, int leftOffset, int rightOffset) {
+        int newWidth = originalImage.getWidth() - leftOffset - rightOffset;
+        int newHeight = originalImage.getHeight() - topOffset - bottomOffset;
+        return originalImage.getSubimage(leftOffset, topOffset, newWidth, newHeight);
+    }
+
     public BufferedImage twoCards(AiTCGCard card1, AiTCGCard card2) throws IOException {
         BufferedImage image1 = createCard(card1);
         BufferedImage image2 = createCard(card2);

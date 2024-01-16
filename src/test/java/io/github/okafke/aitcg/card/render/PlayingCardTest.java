@@ -12,7 +12,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -42,6 +41,7 @@ public class PlayingCardTest {
         int color = Long.decode(card.symbolColor()).intValue();
         BufferedImage bufferedImage = imageService.createCard(card);
         bufferedImage = imageService.addCardSymbol(bufferedImage, new Color(color), card.symbol());
+        bufferedImage = imageService.cropImage(bufferedImage, 37, 37, 22, 22);
         try (FileOutputStream fileOutputStream = new FileOutputStream(new File(file.getParentFile(), card.element() + "-" + card.symbol() + ".jpeg"))) {
             fileOutputStream.write(imageService.toJpeg(imageService.convertType(bufferedImage, BufferedImage.TYPE_INT_RGB)));
         }
