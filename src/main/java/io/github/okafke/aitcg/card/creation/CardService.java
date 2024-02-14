@@ -114,6 +114,7 @@ public class CardService {
     private void print(AiTCGCard card, AiTCGCard secondCard, BufferedImage image, BufferedImage secondImage, int printingId) {
         log.info("Printing " + card.uuid() + ", " + secondCard.uuid());
         BufferedImage printImage = imageService.twoCards(image, secondImage);
+        printImage = imageService.addPrintingId(printImage, printingId);
         log.info("Created two card " + card.uuid() + ", " + secondCard.uuid());
         try {
             byte[] jpeg = imageService.toJpeg(printImage);

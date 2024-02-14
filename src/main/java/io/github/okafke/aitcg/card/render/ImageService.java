@@ -68,6 +68,30 @@ public class ImageService {
         return twoCards(image1, image2);
     }
 
+    public BufferedImage addPrintingId(BufferedImage image, int printingId) {
+        BufferedImage result = new BufferedImage(image.getWidth() + 55, image.getHeight(), BufferedImage.TYPE_INT_RGB);
+
+        Graphics2D g2d = result.createGraphics();
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, image.getWidth() + 55, image.getHeight());
+        g2d.drawImage(image, 55, 0, null);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        Font font = new Font("Serif", Font.BOLD, 40);
+        g2d.setFont(font);
+        g2d.setColor(Color.BLACK);
+
+        AffineTransform original = g2d.getTransform();
+        AffineTransform at = new AffineTransform();
+        at.rotate(-Math.PI / 2, 110, 100); // TODO: no fixed values!
+        g2d.setTransform(at);
+        g2d.drawString("Printing ID: " + printingId, -200, 29);
+        g2d.setTransform(original);
+
+        g2d.dispose();
+        return result;
+    }
+
     public BufferedImage twoCards(BufferedImage image1, BufferedImage image2) {
         BufferedImage result = new BufferedImage(image1.getWidth() * 2, image1.getHeight(), BufferedImage.TYPE_INT_RGB);
 
