@@ -3,6 +3,7 @@ package io.github.okafke.aitcg.card.printing;
 import com.hp.jipp.encoding.AttributeType;
 import com.hp.jipp.encoding.IppPacket;
 import com.hp.jipp.encoding.Tag;
+import com.hp.jipp.encoding.Text;
 import com.hp.jipp.model.MediaCol;
 import com.hp.jipp.model.Types;
 import com.hp.jipp.trans.IppPacketData;
@@ -53,8 +54,8 @@ public class IppPrintJob {
         try {
             IppPacketData response = new HttpIppClientTransport(true).sendData(printer.getPrinterIp(), new IppPacketData(printRequest, in));
             log.info("Received printing response for " + id + ": " + response.getPacket().prettyPrint(100, "   "));
-            String status = response.getPacket().getValue(Tag.operationAttributes, Types.statusMessage).asString();
-            if (status.contains("Server error busy")) {
+            Text status = response.getPacket().getValue(Tag.operationAttributes, Types.statusMessage);
+            if (status != null && status.asString().contains("Server error busy")) {
                 throw new IOException("Failed to run job " + id);
             }
             // TODO: check for error, there is "Server busy"
