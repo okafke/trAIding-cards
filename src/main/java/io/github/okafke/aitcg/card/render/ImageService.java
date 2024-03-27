@@ -28,10 +28,10 @@ import java.util.Map;
 @Service
 public class ImageService {
     private static final WebPImageReaderSpi WEB_P_IMAGE_READER_SPI = new WebPImageReaderSpi();
-    private static final BufferedImage CARD_SYMBOL = loadFromClassPathResource(new ClassPathResource("images/empty.webp"));
+    private static final BufferedImage CARD_SYMBOL = loadFromClassPathResource(new ClassPathResource("images/empty2x.webp"));
     private static final Map<AiTCGElement, BufferedImage> TEMPLATES = loadCardTemplates();
     private static final BufferedImage DEFAULT_TEMPLATE = loadDefaultCardTemplate();
-    private final CardFormat format = CardFormat.SYMBOL;
+    private final CardFormat format = CardFormat.DEFAULT2X;
 
     public byte[] createPNG(AiTCGCard card) throws IOException {
         BufferedImage image = createCard(card);
@@ -103,7 +103,7 @@ public class ImageService {
 
         g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        Font font = new Font("Serif", Font.BOLD, cardSymbol.length() > 1 ? 42 : 44);
+        Font font = new Font("Serif", Font.BOLD, cardSymbol.length() > 1 ? format.symbolFontSize2() : format.symbolFontSize1());
         g2d.setFont(font);
         g2d.setColor(color);
         FontMetrics metrics = g2d.getFontMetrics();
@@ -162,7 +162,7 @@ public class ImageService {
         Graphics2D g2d = image.createGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        Font font = new Font("Serif", Font.BOLD, 40);
+        Font font = new Font("Serif", Font.BOLD, format.titleFontSize());
         g2d.setFont(font);
         g2d.setColor(Color.BLACK);
 
@@ -184,7 +184,7 @@ public class ImageService {
         Graphics2D g2d = image.createGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        Font font = new Font("Serif", Font.PLAIN, 17);
+        Font font = new Font("Serif", Font.PLAIN, format.textFontSize());
         g2d.setFont(font);
         g2d.setColor(Color.BLACK);
         FontMetrics metrics = g2d.getFontMetrics();
@@ -194,7 +194,7 @@ public class ImageService {
         double currentMaxY = lines.size() * metrics.getHeight() + metrics.getHeight();
         if (currentMaxY > maxY) {
             // TODO: calculate this?
-            for (int i = 16; i > 0; i--) {
+            for (int i = format.textFontSize() - 1; i > 0; i--) {
                 font = new Font("Serif", Font.PLAIN, i);
                 g2d.setFont(font);
                 g2d.setColor(Color.BLACK);
@@ -232,14 +232,14 @@ public class ImageService {
         Graphics2D g2d = image.createGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        Font font = new Font("Serif", Font.BOLD, 20);
+        Font font = new Font("Serif", Font.BOLD, format.statsFontSize());
         g2d.setFont(font);
         g2d.setColor(Color.BLACK);
 
-        g2d.drawString(stats.attack() + "", 190, 985);
-        g2d.drawString(stats.defense() + "", 330, 985);
-        g2d.drawString(stats.speed() + "", 455, 985);
-        g2d.drawString(stats.magic() + "", 584, 985);
+        g2d.drawString(stats.attack() + "", 190 * format.statsMultiplier(), 985 * format.statsMultiplier());
+        g2d.drawString(stats.defense() + "", 330 * format.statsMultiplier(), 985 * format.statsMultiplier());
+        g2d.drawString(stats.speed() + "", 455 * format.statsMultiplier(), 985 * format.statsMultiplier());
+        g2d.drawString(stats.magic() + "", 584 * format.statsMultiplier(), 985 * format.statsMultiplier());
         g2d.dispose();
     }
 
@@ -271,10 +271,10 @@ public class ImageService {
     @SneakyThrows
     private static Map<AiTCGElement, BufferedImage> loadCardTemplates() {
         var result = new EnumMap<AiTCGElement, BufferedImage>(AiTCGElement.class);
-        result.put(AiTCGElement.AIR, loadFromByteArray(new ClassPathResource("images/air_card.webp").getContentAsByteArray()));
-        result.put(AiTCGElement.FIRE, loadFromByteArray(new ClassPathResource("images/fire_card.webp").getContentAsByteArray()));
-        result.put(AiTCGElement.EARTH, loadFromByteArray(new ClassPathResource("images/earth_card.webp").getContentAsByteArray()));
-        result.put(AiTCGElement.WATER, loadFromByteArray(new ClassPathResource("images/water_card.webp").getContentAsByteArray()));
+        result.put(AiTCGElement.AIR, loadFromByteArray(new ClassPathResource("images/air_card2x.webp").getContentAsByteArray()));
+        result.put(AiTCGElement.FIRE, loadFromByteArray(new ClassPathResource("images/fire_card2x.webp").getContentAsByteArray()));
+        result.put(AiTCGElement.EARTH, loadFromByteArray(new ClassPathResource("images/earth_card2x.webp").getContentAsByteArray()));
+        result.put(AiTCGElement.WATER, loadFromByteArray(new ClassPathResource("images/water_card2x.webp").getContentAsByteArray()));
         return result;
     }
 

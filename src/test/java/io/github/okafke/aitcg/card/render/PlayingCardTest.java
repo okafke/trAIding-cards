@@ -24,7 +24,7 @@ public class PlayingCardTest {
     @Test
     @SneakyThrows
     public void createPlayingCards() {
-        Files.walk(Paths.get("playing_cards"))
+        Files.walk(Paths.get("playing_cards", "extra"))
                 .filter(file -> file.toString().endsWith(".json"))
                 .forEach(file -> readFile(file.toFile()));
     }
@@ -33,16 +33,16 @@ public class PlayingCardTest {
     private void readFile(File file) {
         log.info("Reading " + file.getName());
         AiTCGCard card = new ObjectMapper().readValue(file, AiTCGCard.class);
-        if (card.symbol() == null) {
-            return;
-        }
+        //if (card.symbol() == null) {
+        //    return;
+        //}
 
-        assert card.symbolColor() != null;
-        int color = Long.decode(card.symbolColor()).intValue();
+        //assert card.symbolColor() != null;
+        //int color = Long.decode(card.symbolColor()).intValue();
         BufferedImage bufferedImage = imageService.createCard(card);
-        bufferedImage = imageService.addCardSymbol(bufferedImage, new Color(color), card.symbol());
-        bufferedImage = imageService.cropImage(bufferedImage, 37, 37, 22, 22);
-        try (FileOutputStream fileOutputStream = new FileOutputStream(new File(file.getParentFile(), card.element() + "-" + card.symbol() + ".jpeg"))) {
+        //bufferedImage = imageService.addCardSymbol(bufferedImage, new Color(color), card.symbol());
+        //bufferedImage = imageService.cropImage(bufferedImage, 37, 37, 22, 22);
+        try (FileOutputStream fileOutputStream = new FileOutputStream(new File(file.getParentFile(),  card.name().replace(" ", "") + ".jpeg"))) {
             fileOutputStream.write(imageService.toJpeg(imageService.convertType(bufferedImage, BufferedImage.TYPE_INT_RGB)));
         }
     }
