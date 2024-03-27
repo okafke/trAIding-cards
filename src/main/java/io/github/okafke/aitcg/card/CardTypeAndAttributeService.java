@@ -8,10 +8,8 @@ import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CardTypeAndAttributeService {
@@ -21,10 +19,13 @@ public class CardTypeAndAttributeService {
 
     public CardTypeAndAttributeService(@Value("classpath:text/animals.txt") Resource animals,
                                        @Value("classpath:text/objects.txt") Resource objects,
-                                       @Value("classpath:text/attributes.txt") Resource attributes) {
-        this.attributes = parseTxt(attributes);
-        this.animals = parseTxt(animals);
-        this.objects = parseTxt(objects);
+                                       @Value("classpath:text/attributes.txt") Resource attributes,
+                                       @Value("classpath:text/animals_de.txt") Resource animalsDe,
+                                       @Value("classpath:text/objects_de.txt") Resource objectsDe,
+                                       @Value("classpath:text/attributes_de.txt") Resource attributesDe) {
+        this.attributes = parseTxt(attributes, attributesDe);
+        this.animals = parseTxt(animals, animalsDe);
+        this.objects = parseTxt(objects, objectsDe);
     }
 
     public List<String> getMaxRandomAttributes(int maxAmount) {
@@ -41,9 +42,25 @@ public class CardTypeAndAttributeService {
     }
 
     @SneakyThrows
-    private List<String> parseTxt(Resource resource) {
+    private List<String> parseTxt(Resource resource, Resource translationResource) {
         String[] strings = resource.getContentAsString(StandardCharsets.UTF_8).split("\\R");
-        return Arrays.stream(strings).filter(StringUtils::hasText).map(String::trim).collect(Collectors.toList());
+        String[] stringsTranslated = translationResource.getContentAsString(StandardCharsets.UTF_8).split("\\R");
+        List<String> result = new ArrayList<>(strings.length);
+        for (int i = 0; i < strings.length; i++) {
+            String string = strings[i];
+            if (!StringUtils.hasText(string)) {
+                continue;
+            }
+
+            String translation = i < stringsTranslated.length ? stringsTranslated[i] : "";
+            if (StringUtils.hasText(translation)) {
+                string += "\n(" + translation + ")";
+            }
+
+            result.add(string);
+        }
+
+        return result;
     }
 
 }

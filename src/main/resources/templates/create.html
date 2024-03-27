@@ -57,11 +57,11 @@
             <td>
                 <button th:if="${type == null}" class="grid-button"
                         th:text="${attribute}"
-                        th:attr="onclick='location.href=\'create?type=' + ${attribute} + '\''">
+                        th:attr="onclick='location.href=\'create?type=' + ${attribute.split('\n')[0]} + '\''">
                 </button>
                 <button th:if="${type != null}" class="grid-button"
                         th:text="${attribute}"
-                        th:attr="onclick=|onAttributeButtonClicked(this, '${attribute}')|">
+                        th:attr="onclick='onAttributeButtonClicked(this,' + '\'' + ${attribute.split('\n')[0]} + '\'' + ')'">
                 </button>
             </td>
         </div>
@@ -90,7 +90,8 @@
     const selectedAttributes = new Set();
 
     // noinspection JSUnusedGlobalSymbols (being called by the thymeleaf template)
-    function onAttributeButtonClicked(button, attribute) {
+    function onAttributeButtonClicked(button, attributeWithTranslation) {
+        const attribute = attributeWithTranslation.split('\n')[0];
         if (button.classList.contains('selected')) {
             button.classList.remove('selected');
             selectedAttributes.delete(attribute);
