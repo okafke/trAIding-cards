@@ -23,7 +23,7 @@ public class Printer {
     private final URI printerIp;
     private long lastJob;
 
-    public void update() {
+    public synchronized void update() {
         if (System.nanoTime() - lastJob < TimeUnit.SECONDS.toNanos(70)) {
             return;
         }
@@ -33,6 +33,10 @@ public class Printer {
             log.info("Found non-null print job");
             try {
                 job.print();
+                if (job.isFailed() && job.getRan() < 3) {
+                    log.info("Readding job " + job.getId() + " a " + (job.getRan() + 1) + " time.");
+                    jobs.addFirst(job);
+                }
             } finally {
                 lastJob = System.nanoTime();
             }

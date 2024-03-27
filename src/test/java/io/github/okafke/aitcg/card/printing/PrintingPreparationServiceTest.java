@@ -38,8 +38,12 @@ public class PrintingPreparationServiceTest {
         AiTCGCard cardWithLongTitle = TestUtil.card("Fiery Fridge Monster, the Terrible!", FRIDGE_TEXT, image);
 
         BufferedImage bufferedImage = imageService.twoCards(cardWithLongTitle, cardWithShortTitle);
-        bufferedImage = printingPreparationService.prepareImageForPrinting(bufferedImage);
+        //bufferedImage = printingPreparationService.prepareImageForPrinting(bufferedImage);
+        bufferedImage = imageService.addPrintingId(bufferedImage, 0);
         byte[] bytes = imageService.toPNG(bufferedImage);
+        /*try (FileOutputStream os = new FileOutputStream("test.png")) {
+            os.write(bytes);
+        }*/
         // TODO: compare bytes to something
     }
 

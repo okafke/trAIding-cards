@@ -54,6 +54,7 @@ public class PrintingServiceTest {
         }
 
         printingService.printCardJpeg(UUID.randomUUID().toString(), 0, imageService.toJpeg(bufferedImage));
+        printingService.updateQueues();
     }
 
 }
